@@ -1,5 +1,6 @@
 import {
   useRegister,
+  useLogin,
   useNavigation,
   useTranslate,
 } from "@refinedev/core";
@@ -11,11 +12,12 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { useForm } from "@refinedev/react-hook-form";
 
 export const Register = () => {
   const t = useTranslate();
-  const { mutateAsync: register } = useRegister();
+  const { mutateAsync: registerUser } = useRegister();
+  const { mutateAsync: loginUser } = useLogin();
   const { push } = useNavigation();
   const {
     register: formRegister,
@@ -34,7 +36,7 @@ export const Register = () => {
       return;
     }
 
-    const result = await register({
+    const result = await registerUser({
       email: values.email,
       password: values.password,
       firstName: values.firstName,
@@ -45,7 +47,7 @@ export const Register = () => {
 
     if (result?.success) {
       // Optional: auto-login immediately after registration
-      await register.login?.({
+      await loginUser({
         email: values.email,
         password: values.password,
       });

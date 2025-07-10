@@ -25,7 +25,7 @@ export const BookingList = () => {
       const end = toISODateTime(booking.end_date, booking.departure_time, "23:59");
 
       return {
-        id: booking.id.toString(),
+        id: booking.id!.toString(),
         title: `Booking #${booking.id}`,
         start: start ?? booking.start_date,
         end: end ?? booking.end_date,

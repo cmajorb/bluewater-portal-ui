@@ -5,6 +5,7 @@ import axios from "axios";
 const API_URL = "https://bluewater-portal.fly.dev";
 
 export const customDataProvider: DataProvider = {
+  getApiUrl: () => API_URL,
   getList: async ({ resource }) => {
     const token = localStorage.getItem("access_token");
     const response = await axios.get(`${API_URL}/${resource}`, {
