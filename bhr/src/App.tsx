@@ -29,6 +29,12 @@ import {
   BlogPostShow,
 } from "./pages/blog-posts";
 import {
+  BookingCreate,
+  BookingEdit,
+  BookingList,
+  BookingShow,
+} from "./pages/bookings";
+import {
   CategoryCreate,
   CategoryEdit,
   CategoryList,
@@ -37,6 +43,7 @@ import {
 import { ForgotPassword } from "./pages/forgotPassword";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
+import { customDataProvider } from "./dataProvider";
 
 function App() {
   return (
@@ -49,11 +56,18 @@ function App() {
           <RefineSnackbarProvider>
             <DevtoolsProvider>
               <Refine
-                dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
+                dataProvider={customDataProvider}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}
                 authProvider={authProvider}
                 resources={[
+                  {
+                    name: "bookings",
+                    list: "/bookings",
+                    create: "/bookings/create",
+                    edit: "/bookings/edit/:id",
+                    show: "/bookings/show/:id",
+                  },
                   {
                     name: "blog_posts",
                     list: "/blog-posts",
@@ -99,6 +113,12 @@ function App() {
                       index
                       element={<NavigateToResource resource="blog_posts" />}
                     />
+                    <Route path="/bookings">
+                      <Route index element={<BookingList />} />
+                      <Route path="create" element={<BookingCreate />} />
+                      <Route path="edit/:id" element={<BookingEdit />} />
+                      <Route path="show/:id" element={<BookingShow />} />
+                    </Route>
                     <Route path="/blog-posts">
                       <Route index element={<BlogPostList />} />
                       <Route path="create" element={<BlogPostCreate />} />
