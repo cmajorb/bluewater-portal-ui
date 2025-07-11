@@ -10,6 +10,7 @@ import { useGetIdentity } from "@refinedev/core";
 import { HamburgerMenu, RefineThemedLayoutV2HeaderProps } from "@refinedev/mui";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
+import PersonIcon from '@mui/icons-material/Person';
 
 type IUser = {
   id: number;
@@ -69,7 +70,10 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                     {user?.name}
                   </Typography>
                 )}
-                <Avatar src={user?.avatar} alt={user?.name} />
+                {/* <Avatar src={user?.avatar} alt={user?.name} /> */}
+                <Avatar>
+                  <PersonIcon />
+                </Avatar>
               </Stack>
             )}
           </Stack>
