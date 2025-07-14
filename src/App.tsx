@@ -28,6 +28,7 @@ import {
   BookingList,
   BookingShow,
 } from "./pages/bookings";
+import { ManageProfile } from "./pages/profile";
 import { ForgotPassword } from "./pages/forgotPassword";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
@@ -91,6 +92,11 @@ function App() {
                       <Route path="edit/:id" element={<BookingEdit />} />
                       <Route path="show/:id" element={<BookingShow />} />
                     </Route>
+
+                    <Route path="/profile">
+                      <Route index element={<ManageProfile />} />
+                    </Route>
+
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
                   <Route

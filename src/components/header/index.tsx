@@ -11,7 +11,7 @@ import { HamburgerMenu, RefineThemedLayoutV2HeaderProps } from "@refinedev/mui";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
 import PersonIcon from '@mui/icons-material/Person';
-
+import { Link } from "react-router-dom";
 type IUser = {
   id: number;
   name: string;
@@ -71,9 +71,15 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                   </Typography>
                 )}
                 {/* <Avatar src={user?.avatar} alt={user?.name} /> */}
-                <Avatar>
-                  <PersonIcon />
-                </Avatar>
+                <IconButton
+                  component={Link}
+                  to="/profile"
+                  sx={{ p: 0 }}
+                >
+                  <Avatar>
+                    <PersonIcon />
+                  </Avatar>
+                </IconButton>
               </Stack>
             )}
           </Stack>
