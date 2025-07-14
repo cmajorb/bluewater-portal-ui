@@ -75,7 +75,7 @@ export const ManageProfile = () => {
     if (!selectedProfileId) return;
 
     const newChildIds = [
-      ...family.members
+      ...family?.members
         .filter((m: any) => !m.is_head)
         .map((m: any) => m.profile.id),
       selectedProfileId,
@@ -85,10 +85,10 @@ export const ManageProfile = () => {
 
     updateFamily({
       resource: "families",
-      id: family.id,
+      id: family?.id,
       values: {
         child_ids: newChildIds,
-        head_ids: family.members
+        head_ids: family?.members
           .filter((m: any) => m.is_head)
           .map((m: any) => m.profile.id),
       },
