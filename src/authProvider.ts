@@ -117,17 +117,6 @@ export const authProvider: AuthProvider = {
     };
   },
 
-  check: async () => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      return { authenticated: true };
-    }
-    return {
-      authenticated: false,
-      redirectTo: "/login",
-    };
-  },
-
   getPermissions: async () => null,
 
   getIdentity: async () => {
