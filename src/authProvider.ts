@@ -36,6 +36,42 @@ export const authProvider: AuthProvider = {
     }
   },
 
+  check: async () => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      return { authenticated: false, redirectTo: "/login" };
+    }
+
+    try {
+      await axiosInstance.get("/profiles/me");
+      return { authenticated: true };
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+        if (!refresh_token) {
+          return { authenticated: false, redirectTo: "/login", logout: true };
+        }
+
+        try {
+          const res = await axiosInstance.post("/auth/refresh", {
+            refresh_token,
+          });
+
+          const { access_token } = res.data;
+          localStorage.setItem(TOKEN_KEY, access_token);
+          axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+          return { authenticated: true };
+        } catch {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(REFRESH_TOKEN_KEY);
+          return { authenticated: false, redirectTo: "/login", logout: true };
+        }
+      }
+
+      return { authenticated: false, redirectTo: "/login", logout: true };
+    }
+  },
+
   register: async (params) => {
     try {
       const {
