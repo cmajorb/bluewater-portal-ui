@@ -80,8 +80,6 @@ export const ManageProfile = () => {
         .map((m: any) => m.profile.id),
       selectedProfileId,
     ];
-    console.log("hit");
-    console.log(newChildIds);
 
     updateFamily({
       resource: "families",
