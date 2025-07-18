@@ -33,6 +33,7 @@ import { ForgotPassword } from "./pages/forgotPassword";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { customDataProvider } from "./dataProvider";
+import { FamilyManager } from "./pages/family";
 
 function App() {
   return (
@@ -55,6 +56,10 @@ function App() {
                     create: "/bookings/create",
                     edit: "/bookings/edit/:id",
                     show: "/bookings/show/:id",
+                  },
+                  {
+                    name: "family member",
+                    list: "/family",
                   },
                 ]}
                 options={{
@@ -95,6 +100,10 @@ function App() {
 
                     <Route path="/profile">
                       <Route index element={<ManageProfile />} />
+                    </Route>
+
+                    <Route path="/family">
+                      <Route index element={<FamilyManager />} />
                     </Route>
 
                     <Route path="*" element={<ErrorComponent />} />

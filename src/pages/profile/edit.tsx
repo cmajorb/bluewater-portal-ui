@@ -7,7 +7,6 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { FamilyManager } from "../../components/FamilyManager";
 
 
 export const ManageProfile = () => {
@@ -34,7 +33,6 @@ export const ManageProfile = () => {
           </Typography>
         </CardContent>
       </Card>
-      <FamilyManager />
     </Box>
   );
 };
