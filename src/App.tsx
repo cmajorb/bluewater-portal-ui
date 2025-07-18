@@ -84,7 +84,7 @@ function App() {
                   >
                     <Route
                       index
-                      element={<NavigateToResource resource="blog_posts" />}
+                      element={<NavigateToResource resource="bookings" />}
                     />
                     <Route path="/bookings">
                       <Route index element={<BookingList />} />
