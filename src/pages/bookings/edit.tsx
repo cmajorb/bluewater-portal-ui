@@ -82,6 +82,13 @@ export const BookingEdit = () => {
         note: formValues.note,
         guests,
       },
+      errorNotification: (data, values, resource) => {
+            return {
+              message: data?.response?.data?.detail || "Failed to update booking",
+              description: "Error",
+              type: "error",
+            };
+          }
     });
   };
 
@@ -95,6 +102,13 @@ export const BookingEdit = () => {
         {
           resource: "bookings",
           id: bookingId,
+          errorNotification: (data, values, resource) => {
+            return {
+              message: data?.response?.data?.detail || "Failed to delete booking",
+              description: "Error",
+              type: "error",
+            };
+          }
         },
         {
           onSuccess: () => {
