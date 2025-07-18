@@ -14,10 +14,9 @@ import {
   FormControl,
   IconButton,
 } from "@mui/material";
-import { useList, useUpdate } from "@refinedev/core";
+import { useList, useUpdate, useDelete, useNavigation, useResourceParams } from "@refinedev/core";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { parseISO, eachDayOfInterval, format } from "date-fns";
-import { useResourceParams } from "@refinedev/core";
 
 
 export const BookingEdit = () => {
@@ -29,8 +28,8 @@ export const BookingEdit = () => {
     formState: { errors },
   } = useForm();
 
-    const { mutate: updateBooking } = useUpdate();
-  
+  const { mutate: updateBooking } = useUpdate();
+
 
   const {
     fields: guestFields,
@@ -47,52 +46,75 @@ export const BookingEdit = () => {
   });
   const { id: bookingId } = useResourceParams();
 
-const onSubmit = (formValues: any) => {
-  const start = parseISO(formValues.start_date);
-  const end = parseISO(formValues.end_date);
-  const days = eachDayOfInterval({ start, end });
+  const onSubmit = (formValues: any) => {
+    const start = parseISO(formValues.start_date);
+    const end = parseISO(formValues.end_date);
+    const days = eachDayOfInterval({ start, end });
 
-  const guests = formValues.guests.map((guest: any) => {
-    const completeMeals = days.map((day) => {
-      const dateStr = format(day, "yyyy-MM-dd");
-      const existing = guest.meals?.find((m: any) => m.date === dateStr);
-      return (
-        existing || {
-          date: dateStr,
-          has_breakfast: true,
-          has_lunch: true,
-          has_dinner: true,
-        }
-      );
+    const guests = formValues.guests.map((guest: any) => {
+      const completeMeals = days.map((day) => {
+        const dateStr = format(day, "yyyy-MM-dd");
+        const existing = guest.meals?.find((m: any) => m.date === dateStr);
+        return (
+          existing || {
+            date: dateStr,
+            has_breakfast: true,
+            has_lunch: true,
+            has_dinner: true,
+          }
+        );
+      });
+
+      return {
+        profile_id: Number(guest.profile_id),
+        meals: completeMeals,
+      };
     });
 
-    return {
-      profile_id: Number(guest.profile_id),
-      meals: completeMeals,
-    };
-  });
+    updateBooking({
+      resource: "bookings",
+      id: bookingId,
+      values: {
+        start_date: formValues.start_date,
+        end_date: formValues.end_date,
+        arrival_time: formValues.arrival_time,
+        departure_time: formValues.departure_time,
+        note: formValues.note,
+        guests,
+      },
+    });
+  };
 
-  updateBooking({
-    resource: "bookings",
-    id: bookingId,
-    values: {
-      start_date: formValues.start_date,
-      end_date: formValues.end_date,
-      arrival_time: formValues.arrival_time,
-      departure_time: formValues.departure_time,
-      note: formValues.note,
-      guests,
-    },
-  });
-};
+
+  const { mutate: deleteBooking } = useDelete();
+  const { list } = useNavigation(); // for redirect after delete
+
+  const handleDelete = () => {
+    if (bookingId) {
+      deleteBooking(
+        {
+          resource: "bookings",
+          id: bookingId,
+        },
+        {
+          onSuccess: () => {
+            list("bookings"); // Redirect to the bookings list after deletion
+          },
+        }
+      );
+    }
+  };
 
   const family = familyData?.data?.[0];
   const familyMembers = family?.members || [];
 
   return (
     <Edit saveButtonProps={{
-        ...saveButtonProps,
-        onClick: handleSubmit(onSubmit),
+      ...saveButtonProps,
+      onClick: handleSubmit(onSubmit),
+    }}
+      deleteButtonProps={{
+        onClick: handleSubmit(handleDelete),
       }}>
       <Box
         component="form"
