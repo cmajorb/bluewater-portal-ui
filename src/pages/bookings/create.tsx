@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import { useList, useCreate } from "@refinedev/core";
+import { useList, useCreate, useNavigation } from "@refinedev/core";
 import { parseISO, eachDayOfInterval, format } from "date-fns";
 
 export const BookingCreate = () => {
@@ -28,6 +28,7 @@ export const BookingCreate = () => {
   } = useForm();
 
   const { mutate: createBooking } = useCreate();
+  const { list } = useNavigation();
 
   const {
     fields: guestFields,
@@ -73,7 +74,12 @@ export const BookingCreate = () => {
         note: formValues.note,
         guests,
       },
-    });
+    },
+        {
+          onSuccess: () => {
+            list("bookings");
+          },
+        });
   };
 
   return (
