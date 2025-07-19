@@ -1,7 +1,8 @@
 import { Authenticated, Refine } from "@refinedev/core";
 import { DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-
+import GroupIcon from "@mui/icons-material/Group";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import {
   ErrorComponent,
   RefineSnackbarProvider,
@@ -56,10 +57,12 @@ function App() {
                     create: "/bookings/create",
                     edit: "/bookings/edit/:id",
                     show: "/bookings/show/:id",
+                    icon: <CalendarMonthIcon />,
                   },
                   {
                     name: "family member",
                     list: "/family",
+                    icon: <GroupIcon />
                   },
                 ]}
                 options={{
