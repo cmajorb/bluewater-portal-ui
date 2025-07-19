@@ -1,50 +1,23 @@
-import {
-  Edit,
-} from "@refinedev/mui";
+// BookingEdit.tsx
+import { Edit } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
 import { useFieldArray } from "react-hook-form";
-import {
-  TextField,
-  Box,
-  Button,
-  Typography,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  IconButton,
-} from "@mui/material";
 import { useList, useUpdate, useDelete, useNavigation, useResourceParams } from "@refinedev/core";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { parseISO, eachDayOfInterval, format } from "date-fns";
-
+import { BookingForm } from "../../components/BookingForm";
 
 export const BookingEdit = () => {
-  const {
-    saveButtonProps,
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm();
+  const { saveButtonProps, register, handleSubmit, control } = useForm();
+  const { fields, append, remove } = useFieldArray({ control, name: "guests" });
 
+  const { data: familyData } = useList({ resource: "families/me" });
   const { mutate: updateBooking } = useUpdate();
-
-
-  const {
-    fields: guestFields,
-    append: appendGuest,
-    remove: removeGuest,
-  } = useFieldArray({
-    control,
-    name: "guests",
-  });
-
-  const { data: familyData, isLoading: isFamilyLoading } = useList({
-    resource: "families/me",
-    queryOptions: { queryKey: ["families", "me"] },
-  });
+  const { mutate: deleteBooking } = useDelete();
+  const { list } = useNavigation();
   const { id: bookingId } = useResourceParams();
+
+  const family = familyData?.data?.[0];
+  const familyMembers = family?.members || [];
 
   const onSubmit = (formValues: any) => {
     const start = parseISO(formValues.start_date);
@@ -74,134 +47,40 @@ export const BookingEdit = () => {
     updateBooking({
       resource: "bookings",
       id: bookingId,
-      values: {
-        start_date: formValues.start_date,
-        end_date: formValues.end_date,
-        arrival_time: formValues.arrival_time,
-        departure_time: formValues.departure_time,
-        note: formValues.note,
-        guests,
-      },
-      errorNotification: (data, values, resource) => {
-            return {
-              message: data?.response?.data?.detail || "Failed to update booking",
-              description: "Error",
-              type: "error",
-            };
-          }
-    });
+      values: { ...formValues, guests },
+    },
+      {
+        onSuccess: () => list("bookings"),
+      });
   };
-
-
-  const { mutate: deleteBooking } = useDelete();
-  const { list } = useNavigation(); // for redirect after delete
 
   const handleDelete = () => {
     if (bookingId) {
       deleteBooking(
-        {
-          resource: "bookings",
-          id: bookingId,
-          errorNotification: (data, values, resource) => {
-            return {
-              message: data?.response?.data?.detail || "Failed to delete booking",
-              description: "Error",
-              type: "error",
-            };
-          }
-        },
-        {
-          onSuccess: () => {
-            list("bookings"); // Redirect to the bookings list after deletion
-          },
-        }
+        { resource: "bookings", id: bookingId },
+        { onSuccess: () => list("bookings") }
       );
     }
   };
 
-  const family = familyData?.data?.[0];
-  const familyMembers = family?.members || [];
-
   return (
-    <Edit saveButtonProps={{
-      ...saveButtonProps,
-      onClick: handleSubmit(onSubmit),
-    }}
+    <Edit
+      saveButtonProps={{
+        ...saveButtonProps,
+        onClick: handleSubmit(onSubmit),
+      }}
       deleteButtonProps={{
         onClick: handleSubmit(handleDelete),
-      }}>
-      <Box
-        component="form"
-        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-      >
-        <TextField
-          label="Start Date"
-          type="date"
-          {...register("start_date", { required: true })}
-          slotProps={{ inputLabel: { shrink: true } }}
-        />
-        <TextField
-          label="End Date"
-          type="date"
-          {...register("end_date", { required: true })}
-          slotProps={{ inputLabel: { shrink: true } }}
-        />
-        <TextField
-          label="Arrival Time"
-          type="time"
-          {...register("arrival_time")}
-          slotProps={{ inputLabel: { shrink: true } }}
-        />
-        <TextField
-          label="Departure Time"
-          type="time"
-          {...register("departure_time")}
-          slotProps={{ inputLabel: { shrink: true } }}
-        />
-        <TextField
-          label="Note"
-          multiline
-          {...register("note")}
-          slotProps={{ inputLabel: { shrink: true } }}
-        />
-
-        <Typography variant="h6">Guests</Typography>
-        {guestFields.map((guest: any, index) => (
-          <Box key={guest.id} sx={{ border: "1px solid #ccc", p: 2, borderRadius: 2 }}>
-            <FormControl fullWidth>
-              <InputLabel id={`guest-${index}-profile-label`}>Family Member</InputLabel>
-              <Select
-                labelId={`guest-${index}-profile-label`}
-                {...register(`guests.${index}.profile_id`, { required: true })}
-                defaultValue={guest.profile_id ?? ""}
-              >
-                {familyMembers.map((member: any) => (
-                  <MenuItem key={member.profile.id} value={member.profile.id}>
-                    {member.profile.first_name} {member.profile.last_name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <Box sx={{ mt: 1 }}>
-              <IconButton onClick={() => removeGuest(index)} color="error">
-                <RemoveCircleOutlineIcon />
-              </IconButton>
-            </Box>
-          </Box>
-        ))}
-
-        <Button
-          variant="outlined"
-          onClick={() =>
-            appendGuest({
-              profile_id: "",
-            })
-          }
-        >
-          Add Guest
-        </Button>
-      </Box>
+      }}
+    >
+      <BookingForm
+        control={control}
+        register={register}
+        guestFields={fields}
+        familyMembers={familyMembers}
+        appendGuest={(guest) => append(guest)}
+        removeGuest={remove}
+      />
     </Edit>
   );
 };
