@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { AuthProvider } from "@refinedev/core";
+import { IUser } from "./interfaces";
 
 export const TOKEN_KEY = "access_token";
 export const REFRESH_TOKEN_KEY = "refresh_token";
@@ -119,7 +120,7 @@ export const authProvider: AuthProvider = {
 
   getPermissions: async () => null,
 
-  getIdentity: async () => {
+  getIdentity: async (): Promise<IUser | null> => {
     const token = localStorage.getItem(TOKEN_KEY);
     if (!token) return null;
 
@@ -133,6 +134,8 @@ export const authProvider: AuthProvider = {
         id: profile.id,
         name: `${profile.first_name} ${profile.last_name}`,
         email: profile.email,
+        is_adult: profile.is_adult,
+        is_admin: profile.is_admin,
         avatar: "https://i.pravatar.cc/300",
       };
     } catch {

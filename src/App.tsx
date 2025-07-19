@@ -3,6 +3,7 @@ import { DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import GroupIcon from "@mui/icons-material/Group";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import {
   ErrorComponent,
   RefineSnackbarProvider,
@@ -35,6 +36,25 @@ import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { customDataProvider } from "./dataProvider";
 import { FamilyManager } from "./pages/family";
+import { IUser } from "./interfaces";
+
+export const accessControlProvider = {
+  can: async ({ resource, action, params }: any) => {
+    const identity = authProvider.getIdentity ? (await authProvider.getIdentity()) as IUser : undefined;
+    const isAdmin = identity?.is_admin;
+
+    if (resource === "admin" && !isAdmin) {
+      // If the resource is "admin" and the user is not an admin, deny access.
+      return {
+        can: false,
+        reason: "Unauthorized",
+      };
+    }
+
+    // Allow access for all other cases
+    return { can: true };
+  },
+};
 
 function App() {
   return (
@@ -50,6 +70,7 @@ function App() {
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}
                 authProvider={authProvider}
+                accessControlProvider={accessControlProvider}
                 resources={[
                   {
                     name: "bookings",
@@ -64,6 +85,11 @@ function App() {
                     list: "/family",
                     icon: <GroupIcon />
                   },
+                  {
+                    name: "admin",
+                    list: "/admin",
+                    icon: <AdminPanelSettingsIcon />, // optional
+                  }
                 ]}
                 options={{
                   syncWithLocation: true,

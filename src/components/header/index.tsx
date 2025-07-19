@@ -17,12 +17,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-
-type IUser = {
-  id: number;
-  name: string;
-  avatar: string;
-};
+import { IUser } from "../../interfaces";
 
 export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   sticky = true,
