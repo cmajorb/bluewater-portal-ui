@@ -5,10 +5,12 @@ import { useFieldArray } from "react-hook-form";
 import { useList, useUpdate, useDelete, useNavigation, useResourceParams } from "@refinedev/core";
 import { parseISO, eachDayOfInterval, format } from "date-fns";
 import { BookingForm } from "../../components/BookingForm";
+import { useState } from "react";
 
 export const BookingEdit = () => {
   const { saveButtonProps, register, handleSubmit, control } = useForm();
   const { fields, append, remove } = useFieldArray({ control, name: "guests" });
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data: familyData } = useList({ resource: "families/me" });
   const { mutate: updateBooking } = useUpdate();
@@ -20,6 +22,7 @@ export const BookingEdit = () => {
   const familyMembers = family?.members || [];
 
   const onSubmit = (formValues: any) => {
+    setIsSaving(true);
     const start = parseISO(formValues.start_date);
     const end = parseISO(formValues.end_date);
     const days = eachDayOfInterval({ start, end });
@@ -50,7 +53,13 @@ export const BookingEdit = () => {
       values: { ...formValues, guests },
     },
       {
-        onSuccess: () => list("bookings"),
+        onSuccess: () => {
+          setIsSaving(false);
+          list("bookings");
+        },
+        onError: () => {
+          setIsSaving(false);
+        },
       });
   };
 
@@ -68,9 +77,11 @@ export const BookingEdit = () => {
       saveButtonProps={{
         ...saveButtonProps,
         onClick: handleSubmit(onSubmit),
+        disabled: isSaving,
       }}
       deleteButtonProps={{
         onClick: handleSubmit(handleDelete),
+        disabled: isSaving,
       }}
     >
       <BookingForm
