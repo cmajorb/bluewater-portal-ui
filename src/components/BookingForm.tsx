@@ -15,6 +15,7 @@ type BookingFormProps = {
     control: any;
     register: any;
     familyMembers: any[];
+    allProfiles: any[];
     guestFields: any[];
     appendGuest: (guest: any) => void;
     removeGuest: (index: number) => void;
@@ -24,6 +25,7 @@ export const BookingForm = ({
     control,
     register,
     familyMembers,
+    allProfiles,
     guestFields,
     appendGuest,
     removeGuest,
@@ -90,8 +92,8 @@ export const BookingForm = ({
         {/* Display selected guests */}
         <Box>
             {guestFields.map((guest: any, index: number) => {
-                const member = familyMembers.find(
-                    (m: any) => m.profile.id === guest.profile_id
+                const member = allProfiles.find(
+                    (m: any) => m.id === guest.profile_id
                 );
 
                 return (
@@ -108,7 +110,7 @@ export const BookingForm = ({
                         }}
                     >
                         <Typography>
-                            {member?.profile.first_name} {member?.profile.last_name}
+                            {member?.first_name} {member?.last_name}
                         </Typography>
                         <IconButton onClick={() => removeGuest(index)} color="error">
                             <RemoveCircleOutlineIcon />

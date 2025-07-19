@@ -13,11 +13,14 @@ export const BookingCreate = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const { data: familyData } = useList({ resource: "families/me" });
+  const { data: profilesData } = useList({ resource: "profiles" });
   const { mutate: createBooking } = useCreate();
   const { list } = useNavigation();
 
   const family = familyData?.data?.[0];
   const familyMembers = family?.members || [];
+  const allProfiles = profilesData?.data || [];
+
 
   const onSubmit = (formValues: any) => {
     setIsSaving(true);
@@ -70,6 +73,7 @@ export const BookingCreate = () => {
         register={register}
         guestFields={fields}
         familyMembers={familyMembers}
+        allProfiles={allProfiles}
         appendGuest={(guest) => append(guest)}
         removeGuest={remove}
       />
