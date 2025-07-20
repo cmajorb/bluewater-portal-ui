@@ -37,6 +37,7 @@ import { Register } from "./pages/register";
 import { customDataProvider } from "./dataProvider";
 import { FamilyManager } from "./pages/family";
 import { IUser } from "./interfaces";
+import AdminPanel from "./pages/admin/manage";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -133,6 +134,10 @@ function App() {
 
                     <Route path="/family">
                       <Route index element={<FamilyManager />} />
+                    </Route>
+
+                    <Route path="/admin">
+                      <Route index element={<AdminPanel />} />
                     </Route>
 
                     <Route path="*" element={<ErrorComponent />} />

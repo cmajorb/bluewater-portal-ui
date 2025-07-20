@@ -18,6 +18,25 @@ export const customDataProvider: DataProvider = {
     };
   },
 
+  custom: async ({ url, method, filters, sort, payload, query, headers }) => {
+    const token = localStorage.getItem("access_token");
+
+    const response = await axios.request({
+      url: `${API_URL}${url}`,
+      method,
+      data: payload,
+      params: query,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...headers,
+      },
+    });
+
+    return {
+      data: response.data,
+    };
+  },
+
   getOne: async ({ resource, id }) => {
     const token = localStorage.getItem("access_token");
     const response = await axios.get(`${API_URL}/${resource}/${id}`, {
