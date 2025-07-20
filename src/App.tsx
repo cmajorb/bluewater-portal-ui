@@ -38,6 +38,7 @@ import { customDataProvider } from "./dataProvider";
 import { FamilyManager } from "./pages/family";
 import { IUser } from "./interfaces";
 import AdminPanel from "./pages/admin/manage";
+import { HomePage } from "./pages/home/HomePage";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -73,6 +74,11 @@ function App() {
                 authProvider={authProvider}
                 accessControlProvider={accessControlProvider}
                 resources={[
+                  {
+                    name: "welcome",
+                    list: "/welcome",
+                    meta: {hide: true},
+                  },
                   {
                     name: "bookings",
                     list: "/bookings",
@@ -119,8 +125,9 @@ function App() {
                   >
                     <Route
                       index
-                      element={<NavigateToResource resource="bookings" />}
+                      element={<NavigateToResource resource="welcome" />}
                     />
+                    <Route path="/welcome" element={<HomePage />} />
                     <Route path="/bookings">
                       <Route index element={<BookingList />} />
                       <Route path="create" element={<BookingCreate />} />
