@@ -25,11 +25,17 @@ export const BookingEdit = () => {
 
   const onSubmit = (formValues: any) => {
     setIsSaving(true);
-    const start = parseISO(formValues.start_date);
-    const end = parseISO(formValues.end_date);
+    const sanitizedValues = {
+    ...formValues,
+    arrival_time: formValues.arrival_time === "" ? null : formValues.arrival_time,
+    departure_time: formValues.departure_time === "" ? null : formValues.departure_time,
+  };
+
+    const start = parseISO(sanitizedValues.start_date);
+    const end = parseISO(sanitizedValues.end_date);
     const days = eachDayOfInterval({ start, end });
 
-    const guests = formValues.guests.map((guest: any) => {
+    const guests = sanitizedValues.guests.map((guest: any) => {
       const completeMeals = days.map((day) => {
         const dateStr = format(day, "yyyy-MM-dd");
         const existing = guest.meals?.find((m: any) => m.date === dateStr);
@@ -52,7 +58,7 @@ export const BookingEdit = () => {
     updateBooking({
       resource: "bookings",
       id: bookingId,
-      values: { ...formValues, guests },
+      values: { ...sanitizedValues, guests },
     },
       {
         onSuccess: () => {
