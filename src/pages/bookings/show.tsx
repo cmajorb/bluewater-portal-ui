@@ -1,5 +1,5 @@
 import { Stack, Typography } from "@mui/material";
-import { useOne, useShow } from "@refinedev/core";
+import { useList, useOne, useShow } from "@refinedev/core";
 import {
   DateField,
   MarkdownField,
@@ -14,44 +14,38 @@ export const BookingShow = () => {
 
   const record = data?.data;
 
-  const { data: categoryData, isLoading: categoryIsLoading } = useOne({
-    resource: "categories",
-    id: record?.category?.id || "",
-    queryOptions: {
-      enabled: !!record,
-    },
-  });
+  const { data: profilesData } = useList({ resource: "profiles" });
+  const allProfiles = profilesData?.data || [];
+
 
   return (
     <Show isLoading={isLoading}>
       <Stack gap={1}>
         <Typography variant="body1" fontWeight="bold">
-          {"ID"}
+          {"Start Date"}
         </Typography>
-        <TextField value={record?.id} />
+        <MarkdownField value={record?.start_date + " (" + record?.arrival_time + ")"} />
 
         <Typography variant="body1" fontWeight="bold">
-          {"Title"}
+          {"End Date"}
         </Typography>
-        <TextField value={record?.title} />
+        <MarkdownField value={record?.end_date + " (" + record?.departure_time + ")"} />
 
         <Typography variant="body1" fontWeight="bold">
-          {"Content"}
+          {"Note"}
         </Typography>
-        <MarkdownField value={record?.content} />
-
+        <MarkdownField value={record?.note} />
         <Typography variant="body1" fontWeight="bold">
-          {"Category"}
+          {"Guests  "}
         </Typography>
-        {categoryIsLoading ? <>Loading...</> : <>{categoryData?.data?.title}</>}
-        <Typography variant="body1" fontWeight="bold">
-          {"Status"}
-        </Typography>
-        <TextField value={record?.status} />
-        <Typography variant="body1" fontWeight="bold">
-          {"CreatedAt"}
-        </Typography>
-        <DateField value={record?.createdAt} />
+        {record?.guests.map((guest: any, index: number) => {
+          const member = allProfiles.find(
+            (m: any) => m.id === guest.profile_id
+          );
+          return (
+            <TextField value={`${member?.first_name} ${member?.last_name}`} />
+          )
+        })}
       </Stack>
     </Show>
   );

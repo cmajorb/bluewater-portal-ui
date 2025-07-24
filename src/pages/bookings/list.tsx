@@ -30,7 +30,7 @@ const toISODateTime = (
 
 export const BookingList = () => {
   const { data: bookingData } = useList({ resource: "bookings" });
-  const { edit } = useNavigation();
+  const { show } = useNavigation();
 
   const submitterIds =
     bookingData?.data
@@ -92,7 +92,7 @@ export const BookingList = () => {
           events={events}
           editable={false}
           eventClick={(info) => {
-            edit("bookings", info.event.id);
+            show("bookings", info.event.id);
           }}
         />
       </Box>
