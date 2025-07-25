@@ -1,52 +1,138 @@
-import { Stack, Typography } from "@mui/material";
-import { useList, useOne, useShow } from "@refinedev/core";
 import {
-  DateField,
-  MarkdownField,
-  Show,
-  TextFieldComponent as TextField,
-} from "@refinedev/mui";
+  Stack,
+  Typography,
+  Divider,
+  Card,
+  CardContent,
+  Grid,
+  Paper,
+} from "@mui/material";
+import { useList, useShow } from "@refinedev/core";
+import { Show } from "@refinedev/mui";
+import { format } from "date-fns";
+import { ChecklistAccordion } from "../../components/Checklist";
+
+const checkInChecklist = [
+  { label: "Bring your own bedding and towels (if possible)", key: "0" },
+  { label: "Turn on water", key: "1" },
+  { label: "Turn on breakers", key: "2" },
+
+];
+
+const checkOutChecklist = [
+  { label: "Laundry started", key: "3" },
+  { label: "Wash dishes", key: "4" },
+  { label: "Clean bathrooms", key: "5" },
+  { label: "Vacuum and mop", key: "6" },
+  { label: "Empty trash", key: "7" },
+  { label: "Lock doors", key: "8" },
+
+];
 
 export const BookingShow = () => {
   const { query } = useShow({});
-
   const { data, isLoading } = query;
-
   const record = data?.data;
 
   const { data: profilesData } = useList({ resource: "profiles" });
   const allProfiles = profilesData?.data || [];
 
+  const formatDateTime = (date: string, time?: string) =>
+    format(new Date(date + "T" + (time || "12:00")), "eeee, MMMM d, yyyy @ h:mm a");
 
   return (
     <Show isLoading={isLoading}>
-      <Stack gap={1}>
-        <Typography variant="body1" fontWeight="bold">
-          {"Start Date"}
-        </Typography>
-        <MarkdownField value={record?.start_date + " (" + record?.arrival_time + ")"} />
+      <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
+        <Stack spacing={3}>
+          <Typography variant="h4" fontWeight="bold">
+            Welcome to Bluewater Heritage Ranch
+          </Typography>
 
-        <Typography variant="body1" fontWeight="bold">
-          {"End Date"}
-        </Typography>
-        <MarkdownField value={record?.end_date + " (" + record?.departure_time + ")"} />
+          <Typography variant="body1">
+            We're thrilled to have you stay with us. This page contains everything you'll need for your upcoming visit. Our ranch has a rich history rooted in generations of tradition, and we're excited to share a piece of that heritage with you.
+          </Typography>
 
-        <Typography variant="body1" fontWeight="bold">
-          {"Note"}
-        </Typography>
-        <MarkdownField value={record?.note} />
-        <Typography variant="body1" fontWeight="bold">
-          {"Guests  "}
-        </Typography>
-        {record?.guests.map((guest: any, index: number) => {
-          const member = allProfiles.find(
-            (m: any) => m.id === guest.profile_id
-          );
-          return (
-            <TextField value={`${member?.first_name} ${member?.last_name}`} />
-          )
-        })}
-      </Stack>
+          <Divider />
+
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                Check-In
+              </Typography>
+              {record?.arrival_time && (
+                <Typography>
+                  {formatDateTime(record?.start_date, record?.arrival_time)}
+                </Typography>)
+              }
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                Check-Out
+              </Typography>
+              {record?.arrival_time && (
+                <Typography>
+                  {formatDateTime(record?.end_date, record?.departure_time)}
+                </Typography>)
+              }
+              <Typography>
+              </Typography>
+            </Grid>
+          </Grid>
+
+          {record?.note && (
+            <>
+              <Divider />
+              <Typography variant="h6" fontWeight="bold">
+                Special Notes
+              </Typography>
+              <Typography>{record.note}</Typography>
+            </>
+          )}
+
+          <Divider />
+
+          <Typography variant="h6" fontWeight="bold">
+            Room Assignments
+          </Typography>
+          <Stack spacing={2}>
+            {record?.guests.map((guest: any, index: number) => {
+              const member = allProfiles.find((m: any) => m.id === guest.profile_id);
+              return (
+                <Card key={index} variant="outlined" sx={{ borderRadius: 2 }}>
+                  <CardContent>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {member?.first_name} {member?.last_name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Room: {guest.room_name}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </Stack>
+
+          <Divider />
+
+          <Typography variant="h6" fontWeight="bold">
+            Information
+          </Typography>
+          <Typography>Gate Code: 2719</Typography>
+
+          <Divider />
+
+          <ChecklistAccordion
+            title="Check-in checklist"
+            checklist={checkInChecklist}
+          />
+
+          <ChecklistAccordion
+            title="Check-out checklist"
+            checklist={checkOutChecklist}
+          />
+        </Stack>
+      </Paper>
     </Show>
   );
 };
