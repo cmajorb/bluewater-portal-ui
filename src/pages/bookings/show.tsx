@@ -6,6 +6,7 @@ import {
   CardContent,
   Grid,
   Paper,
+  Box,
 } from "@mui/material";
 import { useList, useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
@@ -35,10 +36,21 @@ export const BookingShow = () => {
   const record = data?.data;
 
   const { data: profilesData } = useList({ resource: "profiles" });
+  const { data: roomsData } = useList({ resource: "rooms" });
   const allProfiles = profilesData?.data || [];
+  const allRooms = roomsData?.data || [];
 
   const formatDateTime = (date: string, time?: string) =>
     format(new Date(date + "T" + (time || "12:00")), "eeee, MMMM d, yyyy @ h:mm a");
+
+  const guestsByRoom: Record<string, any[]> = {};
+  record?.guests.forEach((guest: any) => {
+    if (!guest.room_id) return;
+    if (!guestsByRoom[guest.room_id]) {
+      guestsByRoom[guest.room_id] = [];
+    }
+    guestsByRoom[guest.room_id].push(guest);
+  });
 
   return (
     <Show isLoading={isLoading}>
@@ -95,18 +107,46 @@ export const BookingShow = () => {
           <Typography variant="h6" fontWeight="bold">
             Room Assignments
           </Typography>
-          <Stack spacing={2}>
-            {record?.guests.map((guest: any, index: number) => {
-              const member = allProfiles.find((m: any) => m.id === guest.profile_id);
+          <Stack spacing={2} direction="row" flexWrap="wrap">
+            {Object.entries(guestsByRoom).map(([roomId, guests]) => {
+              const room = allRooms.find((r: any) => r.id === Number(roomId));
               return (
-                <Card key={index} variant="outlined" sx={{ borderRadius: 2 }}>
+                <Card
+                  key={roomId}
+                  variant="outlined"
+                  sx={{
+                    borderRadius: 2,
+                    width: 300,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
                   <CardContent>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {member?.first_name} {member?.last_name}
+                    <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
+                      {room?.name || "Unnamed Room"}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Room: {guest.room_name}
-                    </Typography>
+                    <Box display="flex" justifyContent="space-between">
+                      <Box>
+                        <Typography variant="body2" color="text.secondary">
+                          {room?.floor} floor
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          Bed size: {room?.bed_size}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <ul style={{ margin: 0, paddingLeft: "1rem" }}>
+                          {guests.map((guest: any, index: number) => {
+                            const member = allProfiles.find((m: any) => m.id === guest.profile_id);
+                            return (
+                              <li key={index}>
+                                {member?.first_name} {member?.last_name}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </Box>
+                    </Box>
                   </CardContent>
                 </Card>
               );
