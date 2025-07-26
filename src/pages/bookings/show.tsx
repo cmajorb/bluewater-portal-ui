@@ -12,10 +12,11 @@ import { useList, useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
 import { format } from "date-fns";
 import { ChecklistAccordion } from "../../components/Checklist";
+import { Room } from "../../types";
 
 const checkInChecklist = [
   { label: "Bring your own bedding and towels (if possible)", key: "0" },
-  { label: "Turn on water", key: "1" },
+  { label: "Turn on water", key: "1", images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHRZAL7HZI9E8S-ZZcBl0BWMpGrPxSgtq8hw&s", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqyj91NgnKpkE120U0vinqJhTFNOeEKqNwbQ&s"] },
   { label: "Turn on breakers", key: "2" },
 
 ];
@@ -109,7 +110,7 @@ export const BookingShow = () => {
           </Typography>
           <Stack spacing={2} direction="row" flexWrap="wrap">
             {Object.entries(guestsByRoom).map(([roomId, guests]) => {
-              const room = allRooms.find((r: any) => r.id === Number(roomId));
+              const room = (allRooms as Room[]).find((r: Room) => r.id === Number(roomId));
               return (
                 <Card
                   key={roomId}
