@@ -1,142 +1,69 @@
-import { useState } from "react";
 import {
-    Box,
-    Typography,
-    Button,
-    TextField,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    CircularProgress,
-    IconButton,
-    Stack,
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardActionArea,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import { useCreate, useDelete, useList, useCustomMutation } from "@refinedev/core";
-import { IFamily, IProfile } from "../../interfaces";
+import GroupsIcon from "@mui/icons-material/Groups";
+import PersonIcon from "@mui/icons-material/Person";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import { useNavigate } from "react-router-dom";
 
+const resources = [
+  {
+    title: "Families",
+    description: "Manage family groups and heads of household.",
+    icon: <GroupsIcon fontSize="large" color="primary" />,
+    path: "/admin/families",
+  },
+  {
+    title: "Profiles",
+    description: "View and manage individual profiles.",
+    icon: <PersonIcon fontSize="large" color="primary" />,
+    path: "/admin/profiles",
+  },
+  {
+    title: "Rooms",
+    description: "Manage room info like size and capacity.",
+    icon: <MeetingRoomIcon fontSize="large" color="primary" />,
+    path: "/admin/rooms",
+  },
+];
 
 export default function AdminPanel() {
-    const [newFamilyName, setNewFamilyName] = useState("");
-    const [headId, setHeadId] = useState<number | "">("");
-    const { mutate: createFamily } = useCreate();
-    const { mutate: deleteFamily } = useDelete();
-    const { mutate: deleteProfile } = useDelete();
-    const { mutate: toggleAdminMutate } = useCustomMutation();
-    const { data: familiesData } = useList({ resource: "families" });
-    const { data: profilesData } = useList({ resource: "profiles" });
+  const navigate = useNavigate();
 
-const families = (familiesData?.data || []) as IFamily[];
-const profiles = (profilesData?.data || []) as IProfile[];
+  return (
+    <Box p={4}>
+      <Typography variant="h4" gutterBottom>
+        Admin Panel
+      </Typography>
 
-    const submitCreateFamily = () => {
-        createFamily(
-            {
-                resource: "families",
-                values: {
-                    name: newFamilyName,
-                    head_ids: [headId],
-                },
-            }
-        );
-    };
+      <Typography variant="body1" mb={4}>
+        Use the tools below to manage key data for your organization.
+      </Typography>
 
-    const submitDeleteFamily = async (id: number) => {
-        if (id) {
-            deleteFamily(
-                { resource: "families", id: id },
-            );
-        }
-    };
-
-    const submitDeleteProfile = async (id: number) => {
-        if (id) {
-            deleteProfile(
-                { resource: "profiles", id: id },
-            );
-        }
-    };
-
-    const submitToggleAdmin = (profileId: number) => {
-        toggleAdminMutate({
-            method: "patch",
-            url: `/profiles/toggle-admin/${profileId}`,
-            values: {},
-        }, {
-            onSuccess: () => window.location.reload()
-        });
-    };
-
-    if (!profiles.length) return <CircularProgress />;
-
-    return (
-        <Box p={4}>
-            <Typography variant="h4" mb={2}>Admin Panel</Typography>
-
-            <Box mb={4}>
-                <Typography variant="h6">Create New Family</Typography>
-                <Stack direction="row" spacing={2} alignItems="center" mt={1}>
-                    <TextField
-                        label="Family Name"
-                        value={newFamilyName}
-                        onChange={(e) => setNewFamilyName(e.target.value)}
-                    />
-                    <FormControl>
-                        <InputLabel>Head of Household</InputLabel>
-                        <Select
-                            value={headId}
-                            label="Head of Household"
-                            onChange={(e) => setHeadId(Number(e.target.value))}
-                            style={{ minWidth: 200 }}
-                        >
-                            {profiles.map((p) => (
-                                <MenuItem key={p.id} value={p.id}>
-                                    {p.first_name} {p.last_name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <Button variant="contained" onClick={submitCreateFamily}>Create</Button>
-                </Stack>
-            </Box>
-
-            <Box mb={4}>
-                <Typography variant="h6">Families</Typography>
-                {families.map((family) => (
-                    <Box key={family.id} p={2} border="1px solid #ccc" mt={2}>
-                        <Typography fontWeight="bold">{family.name}</Typography>
-                        <Stack direction="row" gap={2} flexWrap="wrap" mt={1}>
-                            {family.members.map(({ profile, is_head }) => (
-                                <Box key={profile.id} display="flex" alignItems="center" gap={1}>
-                                    <Typography>
-                                        {profile.first_name} {profile.last_name} {is_head && "(Head)"}
-                                    </Typography>
-                                    <IconButton onClick={() => submitDeleteProfile(profile.id)} size="small">
-                                        <DeleteIcon fontSize="small" />
-                                    </IconButton>
-                                    <IconButton onClick={() => submitToggleAdmin(profile.id)} size="small">
-                                        <AdminPanelSettingsIcon
-                                            fontSize="small"
-                                            color={profile.is_admin ? "primary" : "disabled"}
-                                        />
-                                    </IconButton>
-                                </Box>
-                            ))}
-                        </Stack>
-                        <Button
-                            onClick={() => submitDeleteFamily(family.id)}
-                            color="error"
-                            variant="outlined"
-                            size="small"
-                            sx={{ mt: 1 }}
-                        >
-                            Delete Family
-                        </Button>
-                    </Box>
-                ))}
-            </Box>
-        </Box>
-    );
+      <Grid container spacing={4}>
+        {resources.map((res) => (
+          <Grid item xs={12} sm={6} md={4} key={res.title}>
+            <Card elevation={3}>
+              <CardActionArea onClick={() => navigate(res.path)}>
+                <CardContent>
+                  <Box display="flex" alignItems="center" gap={2} mb={1}>
+                    {res.icon}
+                    <Typography variant="h6">{res.title}</Typography>
+                  </Box>
+                  <Typography variant="body2" color="text.secondary">
+                    {res.description}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
 }

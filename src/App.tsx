@@ -145,6 +145,7 @@ function App() {
 
                     <Route path="/admin">
                       <Route index element={<AdminPanel />} />
+                      <Route path="families" element={<FamiliesAdmin />} />
                     </Route>
 
                     <Route path="*" element={<ErrorComponent />} />

@@ -13,3 +13,22 @@ export type Room = {
   bed_size: string;
   notes: string;
 };
+
+export interface Profile {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_adult: boolean;
+  is_admin: boolean;
+}
+
+export interface Member {
+  profile: Profile;
+  is_head: boolean;
+}
+export interface Family {
+  id: number;
+  name: string;
+  members: Member[];
+}
