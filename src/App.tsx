@@ -39,6 +39,7 @@ import { FamilyManager } from "./pages/family";
 import { IUser } from "./interfaces";
 import AdminPanel from "./pages/admin/manage";
 import { HomePage } from "./pages/home/HomePage";
+import FamiliesAdmin from "./pages/admin/families";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
