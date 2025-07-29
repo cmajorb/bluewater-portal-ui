@@ -40,6 +40,8 @@ import { IUser } from "./interfaces";
 import AdminPanel from "./pages/admin/manage";
 import { HomePage } from "./pages/home/HomePage";
 import FamiliesAdmin from "./pages/admin/families";
+import ProfilesAdmin from "./pages/admin/profiles";
+import RoomsAdmin from "./pages/admin/rooms";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -147,6 +149,9 @@ function App() {
                     <Route path="/admin">
                       <Route index element={<AdminPanel />} />
                       <Route path="families" element={<FamiliesAdmin />} />
+                      <Route path="profiles" element={<ProfilesAdmin />} />
+                      <Route path="rooms" element={<RoomsAdmin />} />
+
                     </Route>
 
                     <Route path="*" element={<ErrorComponent />} />
