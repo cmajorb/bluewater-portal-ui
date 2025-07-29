@@ -11,12 +11,15 @@ import {
     FormControlLabel,
     Stack,
     CardHeader,
+    IconButton,
 } from "@mui/material";
 import { Family, Profile } from "../../types";
 import { useCreate, useDelete, useList, useUpdate } from "@refinedev/core";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export default function FamiliesAdmin() {
     const { data: familiesData, refetch } = useList({ resource: "families" });
@@ -153,138 +156,137 @@ export default function FamiliesAdmin() {
                 Families
             </Typography>
             <div className="max-w-md mx-auto">
-  <Card>
-    <CardHeader title="Create New Family" />
-    <CardContent>
-      {/* Use the Stack component for simple vertical layouts */}
-      <Stack spacing={3}>
-        <Input
-          fullWidth
-          placeholder="New family name"
-          value={newFamilyName}
-          onChange={(e) => setNewFamilyName(e.target.value)}
-        />
-        <Select
-          fullWidth
-          value={newFamilyHeadId ?? ""}
-          displayEmpty
-          onChange={(e) => setNewFamilyHeadId(Number(e.target.value))}
-          size="small"
-        >
-          <MenuItem value="">Select head of family</MenuItem>
-          {profiles.map((p) => (
-            <MenuItem key={p.id} value={p.id}>
-              {p.first_name} {p.last_name}
-            </MenuItem>
-          ))}
-        </Select>
-        <Button variant="contained" fullWidth onClick={handleCreate}>
-          Add Family
-        </Button>
-      </Stack>
-    </CardContent>
-  </Card>
-</div>
-
-
-
-            {families.map((family) => (
-                <Card key={family.id}>
+                <Card>
+                    <CardHeader title="Create New Family" />
                     <CardContent>
-                        <div className="mb-2">
-                            <div className="flex justify-between items-center">
-                                {editingFamilyId === family.id ? (
-                                    <div className="flex items-center gap-2">
-                                        <Input
-                                            value={editedName}
-                                            onChange={(e) => setEditedName(e.target.value)}
-                                        />
-                                        <SaveIcon
-                                            color="primary"
-                                            onClick={() => handleUpdate(family.id)}
-                                            className="cursor-pointer"
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-2">
-                                        <Typography variant="h6">{family.name}</Typography>
-                                        <EditIcon
-                                            color="primary"
-                                            onClick={() => handleEdit(family.id, family.name)}
-                                            className="cursor-pointer"
-                                        />
-                                        <DeleteIcon
-                                            color="error"
-                                            onClick={() => handleDelete(family.id)}
-                                            className="cursor-pointer"
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <ul className="list-disc ml-6 mb-2">
-                            {family.members.map((m) => (
-                                <li key={m.profile.id} className="flex justify-between items-center">
-                                    <span>
-                                        {m.profile.first_name} {m.profile.last_name}{" "}
-                                        {m.is_head && <strong>(Head)</strong>}
-                                    </span>
-                                    <Button
-                                        size="small"
-                                        variant="text"
-                                        onClick={() => handleRemoveProfile(family, m.profile.id)}
-                                    >
-                                        Remove
-                                    </Button>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                            <Select
-                                size="small"
-                                value={selectedProfileId || ""}
-                                displayEmpty
-                                onChange={(e) => setSelectedProfileId(Number(e.target.value))}
-                                style={{ minWidth: 200 }}
-                            >
-                                <MenuItem value="">Select profile to add</MenuItem>
-                                {profiles
-                                    .filter(
-                                        (p) => !family.members.find((m) => m.profile.id === p.id)
-                                    )
-                                    .map((p) => (
-                                        <MenuItem key={p.id} value={p.id}>
-                                            {p.first_name} {p.last_name}
-                                        </MenuItem>
-                                    ))}
-                            </Select>
-
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={isAddingHead}
-                                        onChange={(e) => setIsAddingHead(e.target.checked)}
-                                    />
-                                }
-                                label="Head of Family"
+                        {/* Use the Stack component for simple vertical layouts */}
+                        <Stack spacing={3}>
+                            <Input
+                                fullWidth
+                                placeholder="New family name"
+                                value={newFamilyName}
+                                onChange={(e) => setNewFamilyName(e.target.value)}
                             />
-
-                            <Button
+                            <Select
+                                fullWidth
+                                value={newFamilyHeadId ?? ""}
+                                displayEmpty
+                                onChange={(e) => setNewFamilyHeadId(Number(e.target.value))}
                                 size="small"
-                                variant="outlined"
-                                onClick={() => {
-                                    if (selectedProfileId)
-                                        handleAddProfile(family, selectedProfileId, isAddingHead);
-                                }}
                             >
-                                Add Member
+                                <MenuItem value="">Select head of family</MenuItem>
+                                {profiles.map((p) => (
+                                    <MenuItem key={p.id} value={p.id}>
+                                        {p.first_name} {p.last_name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            <Button variant="contained" fullWidth onClick={handleCreate}>
+                                Add Family
                             </Button>
-                        </div>
+                        </Stack>
                     </CardContent>
                 </Card>
-            ))}
+            </div>
+
+            <Typography variant="h6" gutterBottom>
+                Existing Families
+            </Typography>
+
+            <Stack spacing={3}>
+                {families.map((family) => (
+                    <Card key={family.id}>
+                        <CardContent>
+                            <div className="mb-2">
+                                <div className="flex justify-between items-center">
+                                    {editingFamilyId === family.id ? (
+                                        <div className="flex items-center gap-2">
+                                            <Input
+                                                value={editedName}
+                                                onChange={(e) => setEditedName(e.target.value)}
+                                            />
+                                            <SaveIcon
+                                                color="primary"
+                                                onClick={() => handleUpdate(family.id)}
+                                                className="cursor-pointer"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <Typography variant="h6">{family.name}</Typography>
+                                            <EditIcon
+                                                color="primary"
+                                                onClick={() => handleEdit(family.id, family.name)}
+                                                className="cursor-pointer"
+                                            />
+                                            <DeleteIcon
+                                                color="error"
+                                                onClick={() => handleDelete(family.id)}
+                                                className="cursor-pointer"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <ul className="list-disc ml-6 mb-2">
+                                {family.members.map((m) => (
+                                    <li key={m.profile.id} className="flex justify-between items-center">
+                                        <span>
+                                            {m.profile.first_name} {m.profile.last_name}{" "}
+                                            {m.is_head && <strong>(Head)</strong>}
+                                        </span>
+                                        <IconButton onClick={() => handleRemoveProfile(family, m.profile.id)}>
+                                            <RemoveCircleIcon color="error" />
+                                        </IconButton>
+
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                                <Select
+                                    size="small"
+                                    value={selectedProfileId || ""}
+                                    displayEmpty
+                                    onChange={(e) => setSelectedProfileId(Number(e.target.value))}
+                                    style={{ minWidth: 200 }}
+                                >
+                                    <MenuItem value="">Select profile to add</MenuItem>
+                                    {profiles
+                                        .filter(
+                                            (p) => !family.members.find((m) => m.profile.id === p.id)
+                                        )
+                                        .map((p) => (
+                                            <MenuItem key={p.id} value={p.id}>
+                                                {p.first_name} {p.last_name}
+                                            </MenuItem>
+                                        ))}
+                                </Select>
+
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={isAddingHead}
+                                            onChange={(e) => setIsAddingHead(e.target.checked)}
+                                        />
+                                    }
+                                    label="Head of Family"
+                                />
+                                
+                                <IconButton onClick={() => {
+                                    if (selectedProfileId)
+                                        handleAddProfile(family, selectedProfileId, isAddingHead);
+                                }}>
+                                    <PersonAddIcon color="primary" />
+                                </IconButton>
+
+
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+            </Stack>
         </div>
     );
 }
