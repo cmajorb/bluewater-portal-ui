@@ -9,6 +9,7 @@ import {
 import GroupsIcon from "@mui/icons-material/Groups";
 import PersonIcon from "@mui/icons-material/Person";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import EventIcon from '@mui/icons-material/Event';
 import { useNavigate } from "react-router-dom";
 
 const resources = [
@@ -29,6 +30,12 @@ const resources = [
     description: "Manage room info like size and capacity.",
     icon: <MeetingRoomIcon fontSize="large" color="primary" />,
     path: "/admin/rooms",
+  },
+  {
+    title: "Events",
+    description: "Manage events.",
+    icon: <EventIcon fontSize="large" color="primary" />,
+    path: "/admin/events",
   },
 ];
 

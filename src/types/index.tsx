@@ -32,3 +32,11 @@ export interface Family {
   name: string;
   members: Member[];
 }
+export interface Event {
+    id: number;
+    name: string;
+    description: string;
+    start_date: string;
+    end_date: string;
+    invited_families: Family[];
+}

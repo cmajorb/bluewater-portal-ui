@@ -151,6 +151,7 @@ function App() {
                       <Route path="families" element={<FamiliesAdmin />} />
                       <Route path="profiles" element={<ProfilesAdmin />} />
                       <Route path="rooms" element={<RoomsAdmin />} />
+                      <Route path="events" element={<EventsAdmin />} />
 
                     </Route>
 

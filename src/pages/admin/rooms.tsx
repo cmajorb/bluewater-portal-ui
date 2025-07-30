@@ -4,12 +4,12 @@ import {
     CardContent,
     Typography,
     Button,
-    Input,
     MenuItem,
     Select,
     Stack,
     IconButton,
     Box,
+    TextField,
 } from "@mui/material";
 import { useList, useCreate, useDelete, useUpdate } from "@refinedev/core";
 import { Room } from "../../types";
@@ -135,14 +135,14 @@ export default function RoomsAdmin() {
                         Create New Room
                     </Typography>
                     <Stack spacing={2}>
-
-                        <Input
-                            fullWidth
-                            placeholder="Room Name"
+                        <TextField
+                            label="Room Name"
+                            slotProps={{ inputLabel: { shrink: true } }}
                             value={newRoom.name}
                             onChange={(e) =>
                                 setNewRoom({ ...newRoom, name: e.target.value })
                             }
+                            size="small"
                         />
                         <Select
                             fullWidth
@@ -170,31 +170,34 @@ export default function RoomsAdmin() {
                                 </MenuItem>
                             ))}
                         </Select>
-                        <Input
-                            fullWidth
-                            placeholder="Min People"
-                            type="number"
+                        <TextField
+                            label="Min People"
+                            slotProps={{ inputLabel: { shrink: true } }}
                             value={newRoom.min_people}
+                            type="number"
                             onChange={(e) =>
                                 setNewRoom({ ...newRoom, min_people: e.target.value })
                             }
+                            size="small"
                         />
-                        <Input
-                            fullWidth
-                            placeholder="Max People"
-                            type="number"
+                        <TextField
+                            label="Max People"
+                            slotProps={{ inputLabel: { shrink: true } }}
                             value={newRoom.max_people}
+                            type="number"
                             onChange={(e) =>
                                 setNewRoom({ ...newRoom, max_people: e.target.value })
                             }
+                            size="small"
                         />
-                        <Input
-                            fullWidth
-                            placeholder="Notes"
+                        <TextField
+                            label="Notes"
+                            slotProps={{ inputLabel: { shrink: true } }}
                             value={newRoom.notes}
                             onChange={(e) =>
                                 setNewRoom({ ...newRoom, notes: e.target.value })
                             }
+                            size="small"
                         />
                         <Button variant="contained" onClick={handleCreate}>
                             Add Room
@@ -217,14 +220,14 @@ export default function RoomsAdmin() {
                         <Card key={room.id}>
                             <CardContent className="flex flex-col gap-4">
                                 {isEditing ? (<Stack spacing={2}>
-                                    <Input
-                                        placeholder="Room name"
-                                        fullWidth
-                                        disabled={!isEditing}
+                                    <TextField
+                                        label="Room Name"
+                                        slotProps={{ inputLabel: { shrink: true } }}
                                         value={values.name}
                                         onChange={(e) =>
                                             handleEditChange(room.id, "name", e.target.value)
                                         }
+                                        size="small"
                                     />
                                     <Select
                                         value={values.floor}
@@ -254,12 +257,11 @@ export default function RoomsAdmin() {
                                             </MenuItem>
                                         ))}
                                     </Select>
-                                    <Input
-                                        type="number"
-                                        placeholder="Min people"
-                                        fullWidth
-                                        disabled={!isEditing}
+                                    <TextField
+                                        label="Min People"
+                                        slotProps={{ inputLabel: { shrink: true } }}
                                         value={values.min_people}
+                                        type="number"
                                         onChange={(e) =>
                                             handleEditChange(
                                                 room.id,
@@ -267,13 +269,13 @@ export default function RoomsAdmin() {
                                                 Number(e.target.value)
                                             )
                                         }
+                                        size="small"
                                     />
-                                    <Input
-                                        type="number"
-                                        placeholder="Max people"
-                                        fullWidth
-                                        disabled={!isEditing}
+                                    <TextField
+                                        label="Max People"
+                                        slotProps={{ inputLabel: { shrink: true } }}
                                         value={values.max_people}
+                                        type="number"
                                         onChange={(e) =>
                                             handleEditChange(
                                                 room.id,
@@ -281,15 +283,16 @@ export default function RoomsAdmin() {
                                                 Number(e.target.value)
                                             )
                                         }
+                                        size="small"
                                     />
-                                    <Input
-                                        placeholder="Notes"
-                                        fullWidth
-                                        disabled={!isEditing}
+                                    <TextField
+                                        label="Notes"
+                                        slotProps={{ inputLabel: { shrink: true } }}
                                         value={values.notes}
                                         onChange={(e) =>
                                             handleEditChange(room.id, "notes", e.target.value)
                                         }
+                                        size="small"
                                     />
                                 </Stack>) : (<>
                                     <Typography variant="h6">{room.name}</Typography>
