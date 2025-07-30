@@ -42,6 +42,7 @@ import { HomePage } from "./pages/home/HomePage";
 import FamiliesAdmin from "./pages/admin/families";
 import ProfilesAdmin from "./pages/admin/profiles";
 import RoomsAdmin from "./pages/admin/rooms";
+import EventsAdmin from "./pages/admin/events";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
