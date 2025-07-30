@@ -200,31 +200,31 @@ export default function FamiliesAdmin() {
                             <div className="mb-2">
                                 <div className="flex justify-between items-center">
                                     {editingFamilyId === family.id ? (
-                                        <div className="flex items-center gap-2">
+                                        <Stack direction="row" spacing={1} alignItems="center">
                                             <Input
                                                 value={editedName}
                                                 onChange={(e) => setEditedName(e.target.value)}
+                                                sx={{
+                                                    input: {
+                                                        width: '200px'
+                                                    }
+                                                }}
                                             />
-                                            <SaveIcon
-                                                color="primary"
-                                                onClick={() => handleUpdate(family.id)}
-                                                className="cursor-pointer"
-                                            />
-                                        </div>
+                                            <IconButton onClick={() => handleUpdate(family.id)}>
+                                                <SaveIcon color="primary" />
+                                            </IconButton>
+                                        </Stack>
                                     ) : (
-                                        <div className="flex items-center gap-2">
+                                        <Stack direction="row" spacing={1} alignItems="center">
                                             <Typography variant="h6">{family.name}</Typography>
-                                            <EditIcon
-                                                color="primary"
-                                                onClick={() => handleEdit(family.id, family.name)}
-                                                className="cursor-pointer"
-                                            />
-                                            <DeleteIcon
-                                                color="error"
-                                                onClick={() => handleDelete(family.id)}
-                                                className="cursor-pointer"
-                                            />
-                                        </div>
+                                            <IconButton onClick={() => handleEdit(family.id, family.name)}>
+                                                <EditIcon color="primary" />
+                                            </IconButton>
+                                            <IconButton onClick={() => handleDelete(family.id)}>
+                                                <DeleteIcon color="error" />
+                                            </IconButton>
+
+                                        </Stack>
                                     )}
                                 </div>
                             </div>
