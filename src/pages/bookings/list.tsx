@@ -5,6 +5,8 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Box } from "@mui/material";
+import { addDays, format } from "date-fns";
+import { Event } from "../../types";
 
 const colorPalette = [
   "#4CAF50", // green
@@ -30,7 +32,24 @@ const toISODateTime = (
 
 export const BookingList = () => {
   const { data: bookingData } = useList({ resource: "bookings" });
+  const { data: eventData } = useList({ resource: "events" });
   const { show } = useNavigation();
+
+  const events = (eventData?.data || []) as Event[];
+
+  const eventHighlights =
+    events.map((event) => ({
+      id: `event-${event.id}`,
+      title: event.name,
+      start: toISODateTime(event.start_date, "00:00", "00:00"),
+      end: toISODateTime(
+        format(addDays(new Date(event.end_date), 2), "yyyy-MM-dd"),
+        "23:59", "23:59"
+      ),
+      allDay: true,
+      backgroundColor: "#fce4ec",
+      display: "background",
+    })) ?? [];
 
   const submitterIds =
     bookingData?.data
@@ -56,7 +75,7 @@ export const BookingList = () => {
     return colorMap.get(id)!;
   };
 
-  const events =
+  const bookings =
     bookingData?.data.map((booking) => {
       const profile = profileData?.data.find(
         (p) => p.id === booking.submitter_id
@@ -66,7 +85,7 @@ export const BookingList = () => {
         ? `${profile.first_name} ${profile.last_name}`
         : `Booking #${booking.id}`;
 
-        const color = getColorForSubmitter(booking.submitter_id ?? "unknown");
+      const color = getColorForSubmitter(booking.submitter_id ?? "unknown");
 
       return {
         id: booking.id!.toString(),
@@ -82,6 +101,8 @@ export const BookingList = () => {
       };
     }) ?? [];
 
+  const allCalendarEntries = [...bookings, ...eventHighlights];
+
   return (
     <List headerButtons={<CreateButton />} title="Booking Calendar">
       <Box sx={{ mt: 2 }}>
@@ -89,7 +110,7 @@ export const BookingList = () => {
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           height="auto"
-          events={events}
+          events={allCalendarEntries}
           editable={false}
           eventClick={(info) => {
             show("bookings", info.event.id);
