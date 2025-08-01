@@ -43,6 +43,7 @@ import FamiliesAdmin from "./pages/admin/families";
 import ProfilesAdmin from "./pages/admin/profiles";
 import RoomsAdmin from "./pages/admin/rooms";
 import EventsAdmin from "./pages/admin/events";
+import { EventShow } from "./pages/bookings/event";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -92,6 +93,10 @@ function App() {
                     icon: <CalendarMonthIcon />,
                   },
                   {
+                    name: "events",
+                    show: "/events/show/:id",
+                  },
+                  {
                     name: "family member",
                     list: "/family",
                     icon: <GroupIcon />
@@ -137,6 +142,10 @@ function App() {
                       <Route path="create" element={<BookingCreate />} />
                       <Route path="edit/:id" element={<BookingEdit />} />
                       <Route path="show/:id" element={<BookingShow />} />
+                    </Route>
+
+                    <Route path="/events">
+                      <Route path="show/:id" element={<EventShow />} />
                     </Route>
 
                     <Route path="/profile">

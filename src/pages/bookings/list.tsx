@@ -7,6 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { Box } from "@mui/material";
 import { addDays, format } from "date-fns";
 import { Event } from "../../types";
+import { EventContentArg } from "@fullcalendar/core";
 
 const colorPalette = [
   "#4CAF50", // green
@@ -47,7 +48,6 @@ export const BookingList = () => {
         "23:59", "23:59"
       ),
       allDay: true,
-      backgroundColor: "#fce4ec",
       display: "background",
     })) ?? [];
 
@@ -101,6 +101,25 @@ export const BookingList = () => {
       };
     }) ?? [];
 
+  function renderEventContent(eventContent: EventContentArg) {
+    if (eventContent.event.id.startsWith("event-")) {
+      return (
+        <>
+          <div style={{ color: "#000", marginLeft: "0.25rem" }}>
+            {eventContent.event.title}
+          </div>
+        </>
+      );
+    }
+    return (
+      <>
+        <b>{eventContent.timeText} </b>
+        {eventContent.event.title}
+      </>
+    )
+  }
+
+
   const allCalendarEntries = [...bookings, ...eventHighlights];
 
   return (
@@ -112,8 +131,15 @@ export const BookingList = () => {
           height="auto"
           events={allCalendarEntries}
           editable={false}
+          eventContent={renderEventContent}
           eventClick={(info) => {
-            show("bookings", info.event.id);
+            const id = info.event.id;
+            if (id.startsWith("event-")) {
+              const eventId = id.replace("event-", "");
+              show("events", eventId);
+            } else {
+              show("bookings", id);
+            }
           }}
         />
       </Box>
