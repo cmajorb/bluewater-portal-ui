@@ -18,9 +18,11 @@ import {
     Checkbox,
     Card,
     CardContent,
+    IconButton,
 } from "@mui/material";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
 export const FamilyManager = () => {
     const {
@@ -135,11 +137,7 @@ export const FamilyManager = () => {
                                 {member.is_head ? "(Head)" : ""}
                             </Typography>
                             {isHead && !member.is_head && (
-                                <Button
-                                    variant="outlined"
-                                    size="small"
-                                    color="error"
-                                    onClick={() => {
+                                <IconButton onClick={() => {
                                         const newChildIds = family.members
                                             .filter((m: any) => !m.is_head && m.profile.id !== member.profile.id)
                                             .map((m: any) => m.profile.id);
@@ -151,10 +149,9 @@ export const FamilyManager = () => {
                                             id: family.id,
                                             values: { child_ids: newChildIds, head_ids: headIds },
                                         });
-                                    }}
-                                >
-                                    Remove
-                                </Button>
+                                    }} color="error">
+                                                            <RemoveCircleOutlineIcon />
+                                                        </IconButton>
                             )}
                         </Box>
                     ))}
