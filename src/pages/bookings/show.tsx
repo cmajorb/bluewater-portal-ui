@@ -12,7 +12,7 @@ import { useList, useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
 import { format } from "date-fns";
 import { ChecklistAccordion } from "../../components/Checklist";
-import { Room } from "../../types";
+import { Booking, Profile, Room } from "../../types";
 
 const checkInChecklist = [
   { label: "Bring your own bedding and towels (if possible)", key: "0" },
@@ -34,18 +34,18 @@ const checkOutChecklist = [
 export const BookingShow = () => {
   const { query } = useShow({});
   const { data, isLoading } = query;
-  const record = data?.data;
+  const booking = data?.data as Booking;
 
   const { data: profilesData } = useList({ resource: "profiles" });
   const { data: roomsData } = useList({ resource: "rooms" });
-  const allProfiles = profilesData?.data || [];
-  const allRooms = roomsData?.data || [];
+  const allProfiles = profilesData?.data as Profile[] || [];
+  const allRooms = roomsData?.data as Room[] || [];
 
   const formatDateTime = (date: string, time?: string) =>
     format(new Date(date + "T" + (time || "12:00")), "eeee, MMMM d, yyyy @ h:mm a");
 
   const guestsByRoom: Record<string, any[]> = {};
-  record?.guests.forEach((guest: any) => {
+  booking?.guests.forEach((guest: any) => {
     if (!guest.room_id) return;
     if (!guestsByRoom[guest.room_id]) {
       guestsByRoom[guest.room_id] = [];
@@ -72,9 +72,9 @@ export const BookingShow = () => {
               <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Check-In
               </Typography>
-              {record?.arrival_time && (
+              {booking?.arrival_time && (
                 <Typography>
-                  {formatDateTime(record?.start_date, record?.arrival_time)}
+                  {formatDateTime(booking?.start_date, booking?.arrival_time)}
                 </Typography>)
               }
             </Grid>
@@ -83,9 +83,9 @@ export const BookingShow = () => {
               <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Check-Out
               </Typography>
-              {record?.arrival_time && (
+              {booking?.arrival_time && (
                 <Typography>
-                  {formatDateTime(record?.end_date, record?.departure_time)}
+                  {formatDateTime(booking?.end_date, booking?.departure_time)}
                 </Typography>)
               }
               <Typography>
@@ -93,13 +93,13 @@ export const BookingShow = () => {
             </Grid>
           </Grid>
 
-          {record?.note && (
+          {booking?.note && (
             <>
               <Divider />
               <Typography variant="h6" fontWeight="bold">
                 Special Notes
               </Typography>
-              <Typography>{record.note}</Typography>
+              <Typography>{booking.note}</Typography>
             </>
           )}
 

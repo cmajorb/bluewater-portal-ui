@@ -15,7 +15,7 @@ import { Event, Family } from "../../types";
 export const EventShow = () => {
   const { query } = useShow<Event>();
   const { data, isLoading } = query;
-  const event = data?.data;
+  const event = data?.data as Event;
 
   const formatDate = (date: string) =>
     format(new Date(date), "eeee, MMMM d, yyyy");

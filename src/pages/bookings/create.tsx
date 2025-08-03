@@ -6,6 +6,7 @@ import { useList, useCreate, useNavigation } from "@refinedev/core";
 import { parseISO, eachDayOfInterval, format } from "date-fns";
 import { BookingForm } from "../../components/BookingForm";
 import { useState } from "react";
+import { Family, Meal, Member, Profile } from "../../types";
 
 export const BookingCreate = () => {
   const { register, handleSubmit, control, saveButtonProps } = useForm();
@@ -17,9 +18,9 @@ export const BookingCreate = () => {
   const { mutate: createBooking } = useCreate();
   const { list } = useNavigation();
 
-  const family = familyData?.data?.[0];
-  const familyMembers = family?.members || [];
-  const allProfiles = profilesData?.data || [];
+  const family = familyData?.data?.[0] as Family;
+  const familyMembers = family?.members as Member[] || [];
+  const allProfiles = profilesData?.data as Profile[] || [];
 
 
   const onSubmit = (formValues: any) => {
@@ -40,7 +41,7 @@ export const BookingCreate = () => {
       has_breakfast: true,
       has_lunch: true,
       has_dinner: true,
-    }));
+    } as Meal));
 
     const guests = sanitizedValues.guests.map((guest: any) => ({
       profile_id: Number(guest.profile_id),

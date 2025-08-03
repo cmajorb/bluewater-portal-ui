@@ -6,6 +6,7 @@ import { useList, useUpdate, useDelete, useNavigation, useResourceParams } from 
 import { parseISO, eachDayOfInterval, format } from "date-fns";
 import { BookingForm } from "../../components/BookingForm";
 import { useState } from "react";
+import { Family, Guest, Meal, Member, Profile } from "../../types";
 
 export const BookingEdit = () => {
   const { saveButtonProps, register, handleSubmit, control } = useForm();
@@ -19,9 +20,9 @@ export const BookingEdit = () => {
   const { list } = useNavigation();
   const { id: bookingId } = useResourceParams();
 
-  const family = familyData?.data?.[0];
-  const familyMembers = family?.members || [];
-  const allProfiles = profilesData?.data || [];
+  const family = familyData?.data?.[0] as Family;
+  const familyMembers = family?.members as Member[] || [];
+  const allProfiles = profilesData?.data as Profile[] || [];
 
   const onSubmit = (formValues: any) => {
     setIsSaving(true);
@@ -35,7 +36,7 @@ export const BookingEdit = () => {
     const end = parseISO(sanitizedValues.end_date);
     const days = eachDayOfInterval({ start, end });
 
-    const guests = sanitizedValues.guests.map((guest: any) => {
+    const guests = sanitizedValues.guests.map((guest: Guest) => {
       const completeMeals = days.map((day) => {
         const dateStr = format(day, "yyyy-MM-dd");
         const existing = guest.meals?.find((m: any) => m.date === dateStr);
@@ -45,7 +46,7 @@ export const BookingEdit = () => {
             has_breakfast: true,
             has_lunch: true,
             has_dinner: true,
-          }
+          } as Meal
         );
       });
 

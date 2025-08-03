@@ -10,13 +10,14 @@ import {
     Select,
 } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { Member, Profile } from "../types";
 
 type BookingFormProps = {
     control: any;
     register: any;
-    familyMembers: any[];
-    allProfiles: any[];
-    guestFields: any[];
+    familyMembers: Member[];
+    allProfiles: Profile[];
+    guestFields: any;
     appendGuest: (guest: any) => void;
     removeGuest: (index: number) => void;
 };

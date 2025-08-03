@@ -6,7 +6,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Box } from "@mui/material";
 import { addDays, format } from "date-fns";
-import { Event } from "../../types";
+import { Booking, Event, Profile } from "../../types";
 import { EventContentArg } from "@fullcalendar/core";
 
 const colorPalette = [
@@ -36,6 +36,8 @@ export const BookingList = () => {
   const { data: eventData } = useList({ resource: "events" });
   const { show } = useNavigation();
 
+  const bookings = bookingData?.data as Booking[] || [];
+
   const events = (eventData?.data || []) as Event[];
 
   const eventHighlights =
@@ -52,7 +54,7 @@ export const BookingList = () => {
     })) ?? [];
 
   const submitterIds =
-    bookingData?.data
+    bookings
       ?.map((booking) => booking.submitter_id)
       .filter((id) => id != null) ?? [];
 
@@ -64,10 +66,12 @@ export const BookingList = () => {
     },
   });
 
+  const profiles = profileData?.data as Profile[] || [];
+
   const colorMap = new Map<number | string, string>();
   let colorIndex = 0;
 
-  const getColorForSubmitter = (id: number | string) => {
+  const getColorForSubmitter = (id: number) => {
     if (!colorMap.has(id)) {
       colorMap.set(id, colorPalette[colorIndex % colorPalette.length]);
       colorIndex++;
@@ -75,9 +79,9 @@ export const BookingList = () => {
     return colorMap.get(id)!;
   };
 
-  const bookings =
-    bookingData?.data.map((booking) => {
-      const profile = profileData?.data.find(
+  const bookingHighlights =
+    bookings.map((booking) => {
+      const profile = profiles.find(
         (p) => p.id === booking.submitter_id
       );
 
@@ -85,7 +89,7 @@ export const BookingList = () => {
         ? `${profile.first_name} ${profile.last_name}`
         : `Booking #${booking.id}`;
 
-      const color = getColorForSubmitter(booking.submitter_id ?? "unknown");
+      const color = getColorForSubmitter(booking.submitter_id ?? -1);
 
       return {
         id: booking.id!.toString(),
@@ -120,7 +124,7 @@ export const BookingList = () => {
   }
 
 
-  const allCalendarEntries = [...bookings, ...eventHighlights];
+  const allCalendarEntries = [...bookingHighlights, ...eventHighlights];
 
   return (
     <List headerButtons={<CreateButton />} title="Booking Calendar">

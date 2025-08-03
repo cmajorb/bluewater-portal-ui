@@ -49,7 +49,7 @@ export type Task = {
   due_date: string;
   start_date: string;
   status: 'not_started' | 'assigned' | 'in_progress' | 'finished' | 'paused' | 'overdue';
-  profiles: any[];
+  profiles: Profile[];
   tags: Tag[];
   pictures: any[];
 };
@@ -59,3 +59,29 @@ export type Tag = {
   name: string;
   description: string;
 }
+
+export type Meal = {
+  id: number;
+  date: string;
+  has_breakfast: boolean;
+  has_lunch: boolean;
+  has_dinner: boolean;
+}
+
+export type Guest = {
+  id: number;
+  profile_id: number;
+  meals: Meal[];
+  room_id?: number;
+  room_name?: string;
+}
+export type Booking = {
+  id: number;
+  start_date: string;
+  end_date: string;
+  arrival_time: string;
+  departure_time: string;
+  submitter_id: number;
+  note: string;
+  guests: Guest[];
+};
