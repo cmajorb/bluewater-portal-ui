@@ -128,7 +128,6 @@ export const BookingList = () => {
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          height="auto"
           events={allCalendarEntries}
           editable={false}
           eventContent={renderEventContent}

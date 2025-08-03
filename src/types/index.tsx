@@ -40,3 +40,22 @@ export interface Event {
     end_date: string;
     invited_families: Family[];
 }
+
+export type Task = {
+  id: number;
+  title: string;
+  description: string;
+  is_public: boolean;
+  due_date: string;
+  start_date: string;
+  status: 'not_started' | 'assigned' | 'in_progress' | 'finished' | 'paused' | 'overdue';
+  profiles: any[];
+  tags: Tag[];
+  pictures: any[];
+};
+
+export type Tag = {
+  id: number;
+  name: string;
+  description: string;
+}

@@ -4,6 +4,8 @@ import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import GroupIcon from "@mui/icons-material/Group";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import {
   ErrorComponent,
   RefineSnackbarProvider,
@@ -44,6 +46,8 @@ import ProfilesAdmin from "./pages/admin/profiles";
 import RoomsAdmin from "./pages/admin/rooms";
 import EventsAdmin from "./pages/admin/events";
 import { EventShow } from "./pages/bookings/event";
+import TasksPage from "./pages/tasks/list";
+import TaskDetailPage from "./pages/tasks/show";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -102,6 +106,12 @@ function App() {
                     icon: <GroupIcon />
                   },
                   {
+                    name: "tasks",
+                    list: "/tasks",
+                    show: "/tasks/:id",
+                    icon: <AssignmentIcon />
+                  },
+                  {
                     name: "admin",
                     list: "/admin",
                     icon: <AdminPanelSettingsIcon />, // optional
@@ -154,6 +164,11 @@ function App() {
 
                     <Route path="/family">
                       <Route index element={<FamilyManager />} />
+                    </Route>
+
+                    <Route path="/tasks">
+                      <Route index element={<TasksPage />} />
+                      <Route path=":id" element={<TaskDetailPage />} />
                     </Route>
 
                     <Route path="/admin">
