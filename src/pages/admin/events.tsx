@@ -172,7 +172,6 @@ export default function EventsAdmin() {
                                 justifyContent="space-between"
                                 alignItems="flex-start"
                                 spacing={2}
-                                flexWrap="wrap"
                             >
                                 {editingId === event.id ? (
                                     <Stack spacing={1} sx={{ flexGrow: 1, minWidth: 250 }}>

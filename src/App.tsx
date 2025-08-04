@@ -48,6 +48,7 @@ import EventsAdmin from "./pages/admin/events";
 import { EventShow } from "./pages/bookings/event";
 import TasksPage from "./pages/tasks/list";
 import TaskDetailPage from "./pages/tasks/show";
+import TasksAdmin from "./pages/admin/tasks";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -177,6 +178,7 @@ function App() {
                       <Route path="profiles" element={<ProfilesAdmin />} />
                       <Route path="rooms" element={<RoomsAdmin />} />
                       <Route path="events" element={<EventsAdmin />} />
+                      <Route path="tasks" element={<TasksAdmin />} />
 
                     </Route>
 

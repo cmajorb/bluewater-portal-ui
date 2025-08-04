@@ -10,6 +10,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import PersonIcon from "@mui/icons-material/Person";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import EventIcon from '@mui/icons-material/Event';
+import TaskIcon from '@mui/icons-material/Task';
 import { useNavigate } from "react-router-dom";
 
 const resources = [
@@ -36,6 +37,12 @@ const resources = [
     description: "Manage events.",
     icon: <EventIcon fontSize="large" color="primary" />,
     path: "/admin/events",
+  },
+  {
+    title: "Tasks",
+    description: "Manage tasks.",
+    icon: <TaskIcon fontSize="large" color="primary" />,
+    path: "/admin/tasks",
   },
 ];
 
