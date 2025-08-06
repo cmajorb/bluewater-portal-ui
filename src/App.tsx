@@ -5,7 +5,6 @@ import GroupIcon from "@mui/icons-material/Group";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import {
   ErrorComponent,
   RefineSnackbarProvider,
@@ -49,6 +48,7 @@ import { EventShow } from "./pages/bookings/event";
 import TasksPage from "./pages/tasks/list";
 import TaskDetailPage from "./pages/tasks/show";
 import TasksAdmin from "./pages/admin/tasks";
+import { TaskEditCard } from "./pages/tasks/edit";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -87,7 +87,7 @@ function App() {
                   {
                     name: "welcome",
                     list: "/welcome",
-                    meta: {hide: true},
+                    meta: { hide: true },
                   },
                   {
                     name: "bookings",
@@ -113,7 +113,6 @@ function App() {
                     edit: "/tasks/edit/:id",
                     create: "/tasks/create",
                     icon: <AssignmentIcon />,
-                  },
                   },
                   {
                     name: "admin",
@@ -173,6 +172,8 @@ function App() {
                     <Route path="/tasks">
                       <Route index element={<TasksPage />} />
                       <Route path=":id" element={<TaskDetailPage />} />
+                      <Route path="edit/:id" element={<TaskEditCard />} />
+                      
                     </Route>
 
                     <Route path="/admin">
