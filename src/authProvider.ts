@@ -4,9 +4,53 @@ import { IUser } from "./interfaces";
 
 export const TOKEN_KEY = "access_token";
 export const REFRESH_TOKEN_KEY = "refresh_token";
+export const USER_KEY = "user";
 
 const API_URL = "https://bluewater-portal.fly.dev";
 const axiosInstance = axios.create({ baseURL: API_URL });
+
+// --- Caching Strategy ---
+// In-memory cache for the user's identity, populated from localStorage.
+let userCache: IUser | null = null;
+
+// Axios interceptor to add the token to every request
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (token && !config.headers["Authorization"]) {
+    config.headers["Authorization"] = `Bearer ${token}`;
+  }
+  return config;
+});
+
+/**
+ * Helper function to get user identity from cache or localStorage.
+ * This avoids self-referencing within the authProvider object.
+ */
+const getIdentityHelper = async (): Promise<IUser | null> => {
+  // 1. Check if the in-memory cache exists.
+  if (userCache) {
+    return userCache;
+  }
+
+  // 2. If not, check localStorage.
+  const storedUser = localStorage.getItem(USER_KEY);
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      // 3. Populate cache and return user.
+      userCache = user;
+      return userCache;
+    } catch (e) {
+      // If parsing fails, clear broken data.
+      localStorage.removeItem(USER_KEY);
+      return null;
+    }
+  }
+
+  // 4. If no user data is found anywhere, return null.
+  return null;
+};
+
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
@@ -18,9 +62,29 @@ export const authProvider: AuthProvider = {
 
       const { access_token, refresh_token } = response.data;
 
+      // Clear any old cache on new login
+      userCache = null;
+
       localStorage.setItem(TOKEN_KEY, access_token);
       localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token);
-      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+
+      // After login, fetch user profile and store it
+      const { data: profile } = await axiosInstance.get("/profiles/me", {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+
+      const user: IUser = {
+        id: profile.id,
+        name: `${profile.first_name} ${profile.last_name}`,
+        email: profile.email,
+        is_adult: profile.is_adult,
+        is_admin: profile.is_admin,
+        avatar: `https://i.pravatar.cc/300?u=${profile.id}`,
+      };
+
+      // Store user data in localStorage and in-memory cache
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
+      userCache = user;
 
       return {
         success: true,
@@ -38,39 +102,43 @@ export const authProvider: AuthProvider = {
   },
 
   check: async () => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      return { authenticated: false, redirectTo: "/login" };
-    }
-
-    try {
-      await axiosInstance.get("/profiles/me");
+    // Call the helper function directly
+    const identity = await getIdentityHelper();
+    if (identity) {
       return { authenticated: true };
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
-        if (!refresh_token) {
-          return { authenticated: false, redirectTo: "/login", logout: true };
-        }
-
-        try {
-          const res = await axiosInstance.post("/auth/refresh", {
-            refresh_token,
-          });
-
-          const { access_token } = res.data;
-          localStorage.setItem(TOKEN_KEY, access_token);
-          axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
-          return { authenticated: true };
-        } catch {
-          localStorage.removeItem(TOKEN_KEY);
-          localStorage.removeItem(REFRESH_TOKEN_KEY);
-          return { authenticated: false, redirectTo: "/login", logout: true };
-        }
-      }
-
-      return { authenticated: false, redirectTo: "/login", logout: true };
     }
+
+    return { authenticated: false, redirectTo: "/login" };
+  },
+
+  logout: async () => {
+    // Clear the cache and all user-related data from localStorage
+    userCache = null;
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    return {
+      success: true,
+      redirectTo: "/login",
+    };
+  },
+
+  getPermissions: async () => {
+    // Call the helper function directly
+    const identity = await getIdentityHelper();
+    if (identity) {
+      const permissions = [];
+      if (identity.is_admin) {
+        permissions.push("admin");
+      }
+      return permissions;
+    }
+    return null;
+  },
+
+  getIdentity: async (): Promise<IUser | null> => {
+    // The public getIdentity method now just calls the helper
+    return getIdentityHelper();
   },
 
   register: async (params) => {
@@ -108,42 +176,7 @@ export const authProvider: AuthProvider = {
     }
   },
 
-  logout: async () => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    delete axiosInstance.defaults.headers.common["Authorization"];
-    return {
-      success: true,
-      redirectTo: "/login",
-    };
-  },
-
-  getPermissions: async () => null,
-
-  getIdentity: async (): Promise<IUser | null> => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) return null;
-
-    try {
-      const response = await axios.get(`${API_URL}/profiles/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const profile = response.data;
-      return {
-        id: profile.id,
-        name: `${profile.first_name} ${profile.last_name}`,
-        email: profile.email,
-        is_adult: profile.is_adult,
-        is_admin: profile.is_admin,
-        avatar: "https://i.pravatar.cc/300",
-      };
-    } catch {
-      return null;
-    }
-  },
-
-  onError: async (error) => {
+  onError: async (error: any) => {
     if (error?.response?.status === 401) {
       const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
       if (refresh_token) {
@@ -154,10 +187,19 @@ export const authProvider: AuthProvider = {
 
           const { access_token } = response.data;
           localStorage.setItem(TOKEN_KEY, access_token);
-          axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
-          return { error: null };
-        } catch {
-          return { error };
+
+          return {}; // Retry the original request
+        } catch (refreshError) {
+          // If refresh fails, logout the user completely
+          userCache = null;
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(REFRESH_TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+          return {
+            logout: true,
+            redirectTo: "/login",
+            error,
+          };
         }
       }
     }

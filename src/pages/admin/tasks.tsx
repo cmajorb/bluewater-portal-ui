@@ -17,9 +17,6 @@ import {
     Checkbox,
     FormControlLabel,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useCreate, useDelete, useList, useUpdate } from "@refinedev/core";
 import { Task, Tag, Profile } from "../../types";
 
@@ -28,7 +25,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import { TaskTitle } from "../../components/TaskTitle";
+import { TaskCard } from "../../components/TaskCard";
 
 
 const initialTask = {
@@ -246,161 +243,10 @@ export default function TasksAdmin() {
 
             <Stack spacing={3}>
                 {tasks.map((task) => (
-                    <Card key={task.id}>
-                        <CardContent>
-                            <Stack
-                                direction="row"
-                                justifyContent="space-between"
-                                alignItems="flex-start"
-                                spacing={2}
-                            >
-                                {editingId === task.id ? (
-                                    <Stack spacing={1} sx={{ flexGrow: 1 }}>
-                                        <TextField
-                                            label="Title"
-                                            value={editedTask.title || ""}
-                                            onChange={(e) =>
-                                                setEditedTask((prev) => ({ ...prev, title: e.target.value }))
-                                            }
-                                            size="small"
-                                        />
-                                        <TextField
-                                            label="Description"
-                                            value={editedTask.description || ""}
-                                            onChange={(e) =>
-                                                setEditedTask((prev) => ({ ...prev, description: e.target.value }))
-                                            }
-                                            size="small"
-                                        />
-                                        <TextField
-                                            label="Start Date"
-                                            type="date"
-                                            slotProps={{ inputLabel: { shrink: true } }}
-                                            value={editedTask.start_date || ""}
-                                            onChange={(e) =>
-                                                setEditedTask((prev) => ({ ...prev, start_date: e.target.value }))
-                                            }
-                                            size="small"
-                                        />
-                                        <TextField
-                                            label="Due Date"
-                                            type="date"
-                                            slotProps={{ inputLabel: { shrink: true } }}
-                                            value={editedTask.due_date || ""}
-                                            onChange={(e) =>
-                                                setEditedTask((prev) => ({ ...prev, due_date: e.target.value }))
-                                            }
-                                            size="small"
-                                        />
-                                        <FormControl fullWidth>
-                                            <InputLabel>Status</InputLabel>
-                                            <Select
-                                                value={editedTask.status}
-                                                onChange={(e) =>
-                                                    setEditedTask((prev) => ({ ...prev, status: e.target.value as Task["status"] }))
-                                                }
-                                            >
-                                                {[
-                                                    "not_started",
-                                                    "assigned",
-                                                    "in_progress",
-                                                    "finished",
-                                                    "paused",
-                                                    "overdue",
-                                                ].map((status) => (
-                                                    <MenuItem key={status} value={status}>
-                                                        {status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-
-                                        <FormControl fullWidth>
-                                            <InputLabel>Profiles</InputLabel>
-                                            <Select
-                                                multiple
-                                                value={editedTask.profile_ids}
-                                                onChange={(e) =>
-                                                    setEditedTask((prev) => ({ ...prev, profile_ids: e.target.value as number[] }))
-                                                }
-                                                renderValue={(selected) => (
-                                                    <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
-                                                        {(selected as number[]).map((id) => {
-                                                            const profile = profiles.find((p) => p.id === id);
-                                                            return <Chip key={id} label={profile?.first_name || id} />;
-                                                        })}
-                                                    </Box>
-                                                )}
-                                            >
-                                                {profiles.map((p) => (
-                                                    <MenuItem key={p.id} value={p.id}>
-                                                        {p.first_name} {p.last_name}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox
-                                                    checked={!!editedTask.is_public}
-                                                    onChange={(e) =>
-                                                        setEditedTask((prev) => ({
-                                                            ...prev,
-                                                            is_public: e.target.checked,
-                                                        }))
-                                                    }
-                                                />
-                                            }
-                                            label="Public"
-                                        />
-                                        <Button
-                                            startIcon={<SaveIcon />}
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={() => handleUpdate(task.id)}
-                                        >
-                                            Save
-                                        </Button>
-                                    </Stack>
-                                ) : (
-                                    <Box sx={{ flexGrow: 1 }}>
-                                        <TaskTitle task={task} />
-                                        <Typography variant="body2">{task.description}</Typography>
-                                        <Typography variant="body2">
-                                            {task.start_date} - {task.due_date}
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            Status:{" "}
-                                            {task.status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            Public: {task.is_public ? "Yes" : "No"}
-                                        </Typography>
-                                    </Box>
-                                )}
-                                <Stack direction="row" spacing={1}>
-                                    {editingId !== task.id && (
-                                        <IconButton
-                                            onClick={() => {
-                                                setEditingId(task.id);
-                                                setEditedTask({
-                                                    ...task,
-                                                    profile_ids: task.profiles?.map((p) => p.id),
-                                                    tag_ids: task.tags?.map((t) => t.id),
-                                                });
-                                            }}
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                    )}
-                                    <IconButton onClick={() => handleDelete(task.id)}>
-                                        <DeleteIcon color="error" />
-                                    </IconButton>
-                                </Stack>
-                            </Stack>
-                        </CardContent>
-                    </Card>
+                    <TaskCard
+                        key={task.id}
+                        task={task}
+                    />
                 ))}
             </Stack>
             <Dialog open={isTagDialogOpen} onClose={() => setIsTagDialogOpen(false)} fullWidth>

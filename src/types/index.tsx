@@ -49,7 +49,7 @@ export type Task = {
   due_date: string;
   start_date: string;
   status: 'not_started' | 'assigned' | 'in_progress' | 'finished' | 'paused' | 'overdue';
-  profiles: Profile[];
+  profile_ids?: number[];
   tags: Tag[];
   pictures: any[];
 };

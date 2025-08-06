@@ -110,7 +110,10 @@ function App() {
                     name: "tasks",
                     list: "/tasks",
                     show: "/tasks/:id",
-                    icon: <AssignmentIcon />
+                    edit: "/tasks/edit/:id",
+                    create: "/tasks/create",
+                    icon: <AssignmentIcon />,
+                  },
                   },
                   {
                     name: "admin",
