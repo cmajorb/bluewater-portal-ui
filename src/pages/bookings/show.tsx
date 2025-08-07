@@ -8,7 +8,7 @@ import {
   Paper,
   Box,
 } from "@mui/material";
-import { useList, useShow } from "@refinedev/core";
+import { useList, usePermissions, useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
 import { format } from "date-fns";
 import { ChecklistAccordion } from "../../components/Checklist";
@@ -35,6 +35,10 @@ export const BookingShow = () => {
   const { query } = useShow({});
   const { data, isLoading } = query;
   const booking = data?.data as Booking;
+  const { data: permissionsData } = usePermissions();
+  const permissions = (permissionsData as string[]) ?? [];
+  const isAdmin = permissions.includes("admin");
+
 
   const { data: profilesData } = useList({ resource: "profiles" });
   const { data: roomsData } = useList({ resource: "rooms" });
@@ -54,7 +58,8 @@ export const BookingShow = () => {
   });
 
   return (
-    <Show isLoading={isLoading}>
+    <Show isLoading={isLoading}
+    canEdit={isAdmin}>
       <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
         <Stack spacing={3}>
           <Typography variant="h4" fontWeight="bold">

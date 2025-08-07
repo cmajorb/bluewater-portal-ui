@@ -13,11 +13,12 @@ import {
     CardContent
 } from "@mui/material";
 import { useState } from "react";
-import { Profile } from "../../types";
+import { Profile, Tag } from "../../types";
 import { Edit } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
 import { useDelete, useList, useNavigation, useResourceParams, useUpdate } from "@refinedev/core";
-import { Controller, useFieldArray } from "react-hook-form";
+import { Controller } from "react-hook-form";
+import { TagSelector } from "../../components/TagSelector";
 
 export const TaskEditCard = () => {
     const { saveButtonProps, register, handleSubmit, control } = useForm();
@@ -27,14 +28,17 @@ export const TaskEditCard = () => {
     const { list } = useNavigation();
     const { id: taskId } = useResourceParams();
     const { data: profilesData } = useList({ resource: "profiles" });
-    const { fields, append, remove } = useFieldArray({ control, name: "profiles" });
 
     const allProfiles = profilesData?.data as Profile[] || [];
 
     const onSubmit = (formValues: any) => {
         setIsSaving(true);
+        const payload = {
+            ...formValues,
+            tag_ids: (formValues.tags || []).map((tag: Tag) => tag.id),
+        };
         updateTask(
-            { resource: "tasks", id: taskId, values: formValues },
+            { resource: "tasks", id: taskId, values: payload },
             {
                 onSuccess: () => {
                     setIsSaving(false);
@@ -100,7 +104,6 @@ export const TaskEditCard = () => {
                         <Controller
                             control={control}
                             name="profile_ids"
-                            rules={{ required: true }}
                             render={({ field }) => (
                                 <FormControl fullWidth sx={{ mb: 2 }}>
                                     <InputLabel>Profiles</InputLabel>
@@ -130,7 +133,7 @@ export const TaskEditCard = () => {
                         <Controller
                             control={control}
                             name="status"
-                            rules={{ required: true }}
+                            rules={{ required: false }}
                             render={({ field }) => (
                                 <FormControl fullWidth sx={{ mb: 2 }}>
                                     <InputLabel>Status</InputLabel>
@@ -152,6 +155,18 @@ export const TaskEditCard = () => {
                                         ))}
                                     </Select>
                                 </FormControl>
+                            )}
+                        />
+
+                        <Controller
+                            control={control}
+                            name="tags"
+                            defaultValue={[]}
+                            render={({ field }) => (
+                                <TagSelector
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                />
                             )}
                         />
 
