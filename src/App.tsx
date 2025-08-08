@@ -48,7 +48,8 @@ import { EventShow } from "./pages/bookings/event";
 import TasksPage from "./pages/tasks/list";
 import TaskDetailPage from "./pages/tasks/show";
 import TasksAdmin from "./pages/admin/tasks";
-import { TaskEditCard } from "./pages/tasks/edit";
+import { TaskEdit } from "./pages/tasks/edit";
+import { TaskCreate } from "./pages/tasks/create";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -172,7 +173,8 @@ function App() {
                     <Route path="/tasks">
                       <Route index element={<TasksPage />} />
                       <Route path=":id" element={<TaskDetailPage />} />
-                      <Route path="edit/:id" element={<TaskEditCard />} />
+                      <Route path="edit/:id" element={<TaskEdit />} />
+                      <Route path="create" element={<TaskCreate />} />
                       
                     </Route>
 

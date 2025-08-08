@@ -1,18 +1,16 @@
 import { useState } from "react";
-import { Edit } from "@refinedev/mui";
+import { Create } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
-import { useDelete, useNavigation, useResourceParams } from "@refinedev/core";
 import { TaskForm } from "../../components/forms/TaskForm";
 import { Profile, Tag } from "../../types";
 
-export const TaskEdit = () => {
-    const form = useForm();
+export const TaskCreate = () => {
+    const form = useForm({
+        refineCoreProps: { action: "create" },
+    });
     const { refineCore: { onFinish }, handleSubmit } = form;
 
     const [isSaving, setIsSaving] = useState(false);
-    const { mutate: deleteTask } = useDelete();
-    const { list } = useNavigation();
-    const { id: taskId } = useResourceParams();
 
     const onSubmit = (formValues: any) => {
         setIsSaving(true);
@@ -26,24 +24,14 @@ export const TaskEdit = () => {
         });
     };
 
-    const handleDelete = () => {
-        if (taskId) {
-            deleteTask({ resource: "tasks", id: taskId }, { onSuccess: () => list("tasks") });
-        }
-    };
-
     return (
-        <Edit
+        <Create
             saveButtonProps={{
                 onClick: handleSubmit(onSubmit),
                 disabled: isSaving,
             }}
-            deleteButtonProps={{
-                onClick: handleDelete,
-                disabled: isSaving,
-            }}
         >
             <TaskForm form={form} />
-        </Edit>
+        </Create>
     );
 };

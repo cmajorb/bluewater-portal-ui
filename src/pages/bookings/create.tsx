@@ -4,7 +4,7 @@ import { useForm } from "@refinedev/react-hook-form";
 import { useFieldArray } from "react-hook-form";
 import { useList, useCreate, useNavigation } from "@refinedev/core";
 import { parseISO, eachDayOfInterval, format } from "date-fns";
-import { BookingForm } from "../../components/BookingForm";
+import { BookingForm } from "../../components/forms/BookingForm";
 import { useState } from "react";
 import { Family, Meal, Member, Profile } from "../../types";
 

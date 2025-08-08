@@ -10,7 +10,7 @@ import {
     Select,
 } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import { Member, Profile } from "../types";
+import { Member, Profile } from "../../types";
 
 type BookingFormProps = {
     control: any;

@@ -1,36 +1,23 @@
 import {
-    Box,
-    Typography,
-    Card,
-    CardContent,
     Stack,
-    Button,
     CircularProgress,
-    Tooltip,
 } from "@mui/material";
-import { useList, useNavigation } from "@refinedev/core";
-import { useNavigate } from "react-router-dom";
-import { Task } from "../../types"; // define this in your types if needed
-import PublicIcon from '@mui/icons-material/Public';
-import LockIcon from '@mui/icons-material/Lock';
-import { TaskTitle } from "../../components/TaskTitle";
+import { useList, usePermissions } from "@refinedev/core";
+import { Task } from "../../types";
 import { TaskCard } from "../../components/TaskCard";
+import { List } from "@refinedev/mui";
 
 export default function TasksPage() {
     const { data: tasksData, isLoading } = useList({ resource: "tasks" });
     const tasks = (tasksData?.data || []) as Task[];
-
-    const navigate = useNavigate();
-    const { show } = useNavigation();
+    const { data: permissionsData } = usePermissions();
+    const permissions = (permissionsData as string[]) ?? [];
+    const isAdmin = permissions.includes("admin");
 
     if (isLoading) return <CircularProgress />;
 
     return (
-        <Box p={4}>
-            <Typography variant="h4" mb={4}>
-                Task List
-            </Typography>
-
+        <List canCreate={isAdmin} title="Task List">
             <Stack spacing={2}>
                 {tasks.map((task) => (
                     <TaskCard
@@ -39,6 +26,6 @@ export default function TasksPage() {
                     />
                 ))}
             </Stack>
-        </Box>
+        </List>
     );
 }

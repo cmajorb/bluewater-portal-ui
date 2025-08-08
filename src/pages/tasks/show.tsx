@@ -1,4 +1,4 @@
-import { useShow } from "@refinedev/core";
+import { usePermissions, useShow } from "@refinedev/core";
 import {
     Typography,
     Chip,
@@ -14,13 +14,17 @@ import { TaskTitle } from "../../components/TaskTitle";
 export default function TaskDetailPage() {
     const { query } = useShow({});
     const { data, isLoading } = query;
+      const { data: permissionsData } = usePermissions();
+      const permissions = (permissionsData as string[]) ?? [];
+      const isAdmin = permissions.includes("admin");
 
     const task = data?.data as Task;
 
     if (isLoading || !task) return <CircularProgress />;
 
     return (
-        <Show isLoading={isLoading}>
+        <Show isLoading={isLoading}
+            canEdit={isAdmin}>
             <TaskTitle task={task} />
             <Typography variant="body2">Start: {task.start_date}</Typography>
             <Typography variant="body2" mb={2}>Due: {task.due_date}</Typography>
