@@ -19,12 +19,13 @@ export default function TasksPage() {
     return (
         <List canCreate={isAdmin} title="Task List">
             <Stack spacing={2}>
-                {tasks.map((task) => (
-                    <TaskCard
-                        key={task.id}
-                        task={task}
-                    />
-                ))}
+                {tasks.slice()
+                    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()).map((task) => (
+                        <TaskCard
+                            key={task.id}
+                            task={task}
+                        />
+                    ))}
             </Stack>
         </List>
     );
