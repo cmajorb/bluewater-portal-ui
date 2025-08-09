@@ -36,7 +36,6 @@ import { ForgotPassword } from "./pages/forgotPassword";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { customDataProvider } from "./dataProvider";
-import { FamilyManager } from "./pages/family";
 import { IUser } from "./interfaces";
 import AdminPanel from "./pages/admin/manage";
 import { HomePage } from "./pages/home/HomePage";
