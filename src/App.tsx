@@ -50,6 +50,10 @@ import TaskDetailPage from "./pages/tasks/show";
 import TasksAdmin from "./pages/admin/tasks";
 import { TaskEdit } from "./pages/tasks/edit";
 import { TaskCreate } from "./pages/tasks/create";
+import FamiliesPage from "./pages/family/list";
+import FamilyDetailPage from "./pages/family/show";
+import { FamilyEdit } from "./pages/family/edit";
+import { FamilyCreate } from "./pages/family/create";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -103,8 +107,11 @@ function App() {
                     show: "/events/show/:id",
                   },
                   {
-                    name: "family member",
-                    list: "/family",
+                    name: "families",
+                    list: "/families",
+                    show: "/families/:id",
+                    edit: "/families/edit/:id",
+                    create: "/families/create",
                     icon: <GroupIcon />
                   },
                   {
@@ -166,8 +173,12 @@ function App() {
                       <Route index element={<ManageProfile />} />
                     </Route>
 
-                    <Route path="/family">
-                      <Route index element={<FamilyManager />} />
+                    <Route path="/families">
+                      <Route index element={<FamiliesPage />} />
+
+                      <Route path=":id" element={<FamilyDetailPage />} />
+                      <Route path="edit/:id" element={<FamilyEdit />} />
+                      <Route path="create" element={<FamilyCreate />} />
                     </Route>
 
                     <Route path="/tasks">

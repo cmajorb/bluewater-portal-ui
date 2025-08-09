@@ -6,8 +6,8 @@ import {
     CardContent,
     Chip
 } from "@mui/material";
-import { Task } from "../types";
-import { TaskTitle } from "./TaskTitle";
+import { Task } from "../../types";
+import { TaskTitle } from "../TaskTitle";
 import { useNavigation } from "@refinedev/core";
 import { isBefore, isWithinInterval, parseISO, addDays } from "date-fns";
 

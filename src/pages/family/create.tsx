@@ -1,18 +1,16 @@
 import { useState } from "react";
-import { Edit } from "@refinedev/mui";
+import { Create } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
-import { useDelete, useNavigation, useResourceParams } from "@refinedev/core";
 import { FamilyForm } from "../../components/forms/FamilyForm";
 import { Member } from "../../types";
 
-export const FamilyEdit = () => {
-    const form = useForm();
+export const FamilyCreate = () => {
+     const form = useForm({
+        refineCoreProps: { action: "create" },
+    });
     const { refineCore: { onFinish }, handleSubmit } = form;
 
     const [isSaving, setIsSaving] = useState(false);
-    const { mutate: deleteFamily } = useDelete();
-    const { list } = useNavigation();
-    const { id: familyId } = useResourceParams();
 
     const onSubmit = (formValues: any) => {
         setIsSaving(true);
@@ -26,24 +24,14 @@ export const FamilyEdit = () => {
         });
     };
 
-    const handleDelete = () => {
-        if (familyId) {
-            deleteFamily({ resource: "families", id: familyId }, { onSuccess: () => list("families") });
-        }
-    };
-
     return (
-        <Edit
+        <Create
             saveButtonProps={{
                 onClick: handleSubmit(onSubmit),
                 disabled: isSaving,
             }}
-            deleteButtonProps={{
-                onClick: handleDelete,
-                disabled: isSaving,
-            }}
         >
             <FamilyForm form={form} />
-        </Edit>
+        </Create>
     );
 };
