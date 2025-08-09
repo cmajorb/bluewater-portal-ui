@@ -16,19 +16,19 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import { useState } from "react";
-import { ChecklistItem } from "../types"; // Adjust the import path as necessary
+import { Checklist} from "../types";
 
 export const ChecklistAccordion = ({
   title,
   checklist,
 }: {
   title: string;
-  checklist: ChecklistItem[];
+  checklist: Checklist;
 }) => {
   const [checklistState, setChecklistState] = useState<Record<string, boolean>>(
     () =>
-      checklist.reduce((acc, item) => {
-        acc[item.key] = false;
+      checklist.items.reduce((acc, item) => {
+        acc[item.id] = false;
         return acc;
       }, {} as Record<string, boolean>)
   );
@@ -39,10 +39,10 @@ export const ChecklistAccordion = ({
     label: string;
   }>({ open: false, images: [], label: "" });
 
-  const total = checklist.length;
-  const checked = checklist.filter((item) => checklistState[item.key]).length;
+  const total = checklist.items.length;
+  const checked = checklist.items.filter((item) => checklistState[item.id]).length;
 
-  const handleToggle = (key: string) => {
+  const handleToggle = (key: number) => {
     setChecklistState((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -67,9 +67,9 @@ export const ChecklistAccordion = ({
         </AccordionSummary>
         <AccordionDetails>
           <Stack spacing={1}>
-            {checklist.map((item) => (
+            {checklist.items.map((item) => (
               <Stack
-                key={item.key}
+                key={item.id}
                 direction="row"
                 alignItems="center"
                 justifyContent="space-between"
@@ -77,15 +77,15 @@ export const ChecklistAccordion = ({
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={!!checklistState[item.key]}
-                      onChange={() => handleToggle(item.key)}
+                      checked={!!checklistState[item.id]}
+                      onChange={() => handleToggle(item.id)}
                     />
                   }
-                  label={item.label}
+                  label={item.text}
                 />
-                {item.images && item.images?.length > 0 && (
+                {item.pictures && item.pictures?.length > 0 && (
                   <IconButton
-                    onClick={() => openImageDialog(item.images!, item.label)}
+                    onClick={() => openImageDialog(item.pictures!, item.text)}
                     size="small"
                     aria-label="View Images"
                   >

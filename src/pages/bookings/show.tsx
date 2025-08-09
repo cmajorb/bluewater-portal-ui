@@ -14,22 +14,26 @@ import { format } from "date-fns";
 import { ChecklistAccordion } from "../../components/Checklist";
 import { Booking, Profile, Room } from "../../types";
 
-const checkInChecklist = [
-  { label: "Bring your own bedding and towels (if possible)", key: "0" },
-  { label: "Turn on water", key: "1", images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHRZAL7HZI9E8S-ZZcBl0BWMpGrPxSgtq8hw&s", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqyj91NgnKpkE120U0vinqJhTFNOeEKqNwbQ&s"] },
-  { label: "Turn on breakers", key: "2" },
+const checkInChecklist = {
+  title: "Check-in Checklist",
+  items: [
+    { text: "Bring your own bedding and towels (if possible)", id: 0 },
+    { text: "Turn on water", id: 1, pictures: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHRZAL7HZI9E8S-ZZcBl0BWMpGrPxSgtq8hw&s", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqyj91NgnKpkE120U0vinqJhTFNOeEKqNwbQ&s"] },
+    { text: "Turn on breakers", id: 2 },
+  ]
+};
 
-];
-
-const checkOutChecklist = [
-  { label: "Laundry started", key: "3" },
-  { label: "Wash dishes", key: "4" },
-  { label: "Clean bathrooms", key: "5" },
-  { label: "Vacuum and mop", key: "6" },
-  { label: "Empty trash", key: "7" },
-  { label: "Lock doors", key: "8" },
-
-];
+const checkOutChecklist = {
+  title: "Check-out Checklist",
+  items: [
+    { text: "Vacuum and mop", id: 0 },
+    { text: "Empty trash", id: 1 },
+    { text: "Lock doors", id: 2 },
+    { text: "Laundry started", id: 3 },
+    { text: "Wash dishes", id: 4 },
+    { text: "Clean bathrooms", id: 5 },
+  ]
+};
 
 export const BookingShow = () => {
   const { query } = useShow({});
@@ -59,7 +63,7 @@ export const BookingShow = () => {
 
   return (
     <Show isLoading={isLoading}
-    canEdit={isAdmin}>
+      canEdit={isAdmin}>
       <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
         <Stack spacing={3}>
           <Typography variant="h4" fontWeight="bold">
