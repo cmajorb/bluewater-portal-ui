@@ -1,17 +1,7 @@
 export type ChecklistItem = {
-  id: number;
-  text: string;
-  order: number;
-  checklist_id: number;
-  pictures?: string[];
-};
-
-export type Checklist = {
-  id: number;
-  title: string;
-  active: boolean;
-  items: ChecklistItem[];
-  tags: Tag[];
+  label: string;
+  key: string;
+  images?: string[];
 };
 
 export type Room = {
@@ -43,12 +33,12 @@ export interface Family {
   members: Member[];
 }
 export interface Event {
-  id: number;
-  name: string;
-  description: string;
-  start_date: string;
-  end_date: string;
-  invited_families: Family[];
+    id: number;
+    name: string;
+    description: string;
+    start_date: string;
+    end_date: string;
+    invited_families: Family[];
 }
 
 export type Task = {
