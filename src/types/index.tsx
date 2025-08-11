@@ -85,3 +85,8 @@ export type Booking = {
   note: string;
   guests: Guest[];
 };
+
+export type MinimalProfile = {
+    id: number;
+    name: string;
+};

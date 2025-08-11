@@ -5,49 +5,46 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    CircularProgress,
     SelectChangeEvent,
 } from "@mui/material";
-import { useList } from "@refinedev/core";
-import { Profile } from "../types";
+import { MinimalProfile } from "../types";
 
-export function ProfileSelector({ value, onChange }: {
-    value: Profile[];
-    onChange: (profiles: Profile[]) => void;
-}) {
-    const { data: profilesData, isLoading, refetch } = useList({ resource: "profiles" });
-    const allProfiles = (profilesData?.data || []) as Profile[];
-    const selectedProfileIds = (value || []).map(profile => profile.id);
+
+
+interface ProfileSelectorProps {
+    value: MinimalProfile[];
+    onChange: (profiles: MinimalProfile[]) => void;
+    profiles: MinimalProfile[];
+}
+
+export function ProfileSelector({ value, onChange, profiles }: ProfileSelectorProps) {
+    const selectedIds = (value || []).map((profile) => profile.id);
 
     const handleSelectChange = (event: SelectChangeEvent<number[]>) => {
         const selectedIds = event.target.value as number[];
-        const selectedProfiles = allProfiles.filter(profile => selectedIds.includes(profile.id));
+        const selectedProfiles = profiles.filter((p) => selectedIds.includes(p.id));
         onChange(selectedProfiles);
     };
-
-    if (isLoading) {
-        return <CircularProgress />;
-    }
 
     return (
         <FormControl fullWidth>
             <InputLabel>Profiles</InputLabel>
             <Select
                 multiple
-                value={selectedProfileIds}
+                value={selectedIds}
                 onChange={handleSelectChange}
                 renderValue={(selected) => (
                     <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
                         {selected.map((id) => {
                             const profile = value.find((p) => p.id === id);
-                            return <Chip key={id} label={`${profile?.first_name} ${profile?.last_name}` || id} />;
+                            return <Chip key={id} label={profile?.name || id} />;
                         })}
                     </Box>
                 )}
             >
-                {allProfiles.map((profile) => (
+                {profiles.map((profile) => (
                     <MenuItem key={profile.id} value={profile.id}>
-                        {`${profile?.first_name} ${profile?.last_name}`}
+                        {profile.name}
                     </MenuItem>
                 ))}
             </Select>

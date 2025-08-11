@@ -14,7 +14,8 @@ import { Controller, FieldValues } from "react-hook-form";
 import { TagSelector } from "../TagSelector";
 import { ProfileSelector } from "../ProfileSelector";
 import { UseFormReturnType } from "@refinedev/react-hook-form";
-import { BaseRecord, HttpError } from "@refinedev/core";
+import { BaseRecord, HttpError, useList } from "@refinedev/core";
+import { MinimalProfile } from "../../types";
 
 interface TaskFormProps {
     form: UseFormReturnType<BaseRecord, HttpError, FieldValues, {}, BaseRecord, BaseRecord, HttpError>;
@@ -22,6 +23,12 @@ interface TaskFormProps {
 
 export const TaskForm = ({ form }: TaskFormProps) => {
     const { register, control } = form;
+    const { data: profilesData, isLoading } = useList({resource: "profiles"});
+
+    const profiles = (profilesData?.data || []).map((p) => ({
+        id: p.id,
+        name: `${p.first_name} ${p.last_name}`,
+    })) as MinimalProfile[];
 
     return (
         <Card>
@@ -54,12 +61,20 @@ export const TaskForm = ({ form }: TaskFormProps) => {
                         control={control}
                         name="profiles"
                         defaultValue={[]}
-                        render={({ field }) => (
-                            <ProfileSelector
-                                value={field.value}
-                                onChange={field.onChange}
-                            />
-                        )}
+                        render={({ field }) => {
+                            const normalizedValue = (field.value || []).map((p: any) => ({
+                                id: p.id,
+                                name: p.name ?? `${p.first_name ?? ""} ${p.last_name ?? ""}`.trim(),
+                            }));
+
+                            return (
+                                <ProfileSelector
+                                    value={normalizedValue}
+                                    onChange={field.onChange}
+                                    profiles={profiles}
+                                />
+                            );
+                        }}
                     />
 
                     <Controller
