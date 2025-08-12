@@ -7,7 +7,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import { useShow } from "@refinedev/core";
+import { usePermissions, useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
 import { format } from "date-fns";
 import { Event, Family } from "../../types";
@@ -17,11 +17,15 @@ export const EventShow = () => {
   const { data, isLoading } = query;
   const event = data?.data as Event;
 
+  const { data: permissionsData } = usePermissions();
+      const permissions = (permissionsData as string[]) ?? [];
+      const isAdmin = permissions.includes("admin");
+
   const formatDate = (date: string) =>
     format(new Date(date), "eeee, MMMM d, yyyy");
 
   return (
-    <Show isLoading={isLoading}>
+    <Show isLoading={isLoading} canEdit={isAdmin}>
       <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
         <Stack spacing={3}>
           <Typography variant="h4" fontWeight="bold">

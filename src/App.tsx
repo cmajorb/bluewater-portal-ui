@@ -43,16 +43,18 @@ import FamiliesAdmin from "./pages/admin/families";
 import ProfilesAdmin from "./pages/admin/profiles";
 import RoomsAdmin from "./pages/admin/rooms";
 import EventsAdmin from "./pages/admin/events";
-import { EventShow } from "./pages/bookings/event";
+import { EventShow } from "./pages/events/show";
 import TasksPage from "./pages/tasks/list";
 import TaskDetailPage from "./pages/tasks/show";
-import TasksAdmin from "./pages/admin/tasks";
 import { TaskEdit } from "./pages/tasks/edit";
 import { TaskCreate } from "./pages/tasks/create";
 import FamiliesPage from "./pages/family/list";
 import FamilyDetailPage from "./pages/family/show";
 import { FamilyEdit } from "./pages/family/edit";
 import { FamilyCreate } from "./pages/family/create";
+import EventsPage from "./pages/events/list";
+import { EventEdit } from "./pages/events/edit";
+import { EventCreate } from "./pages/events/create";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -104,6 +106,10 @@ function App() {
                   {
                     name: "events",
                     show: "/events/show/:id",
+                    list: "/events",
+                    edit: "/events/edit/:id",
+                    create: "/events/create",
+
                   },
                   {
                     name: "families",
@@ -165,7 +171,11 @@ function App() {
                     </Route>
 
                     <Route path="/events">
+                      <Route index element={<EventsPage />} />
                       <Route path="show/:id" element={<EventShow />} />
+                      <Route path="edit/:id" element={<EventEdit />} />
+                      <Route path="create" element={<EventCreate />} />
+
                     </Route>
 
                     <Route path="/profile">
@@ -185,7 +195,7 @@ function App() {
                       <Route path=":id" element={<TaskDetailPage />} />
                       <Route path="edit/:id" element={<TaskEdit />} />
                       <Route path="create" element={<TaskCreate />} />
-                      
+
                     </Route>
 
                     <Route path="/admin">
@@ -194,8 +204,6 @@ function App() {
                       <Route path="profiles" element={<ProfilesAdmin />} />
                       <Route path="rooms" element={<RoomsAdmin />} />
                       <Route path="events" element={<EventsAdmin />} />
-                      <Route path="tasks" element={<TasksAdmin />} />
-
                     </Route>
 
                     <Route path="*" element={<ErrorComponent />} />
