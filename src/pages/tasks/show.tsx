@@ -62,11 +62,15 @@ export default function TaskDetailPage() {
             <Divider sx={{ my: 2 }} />
 
             <Typography variant="body1" mb={2}>Tags:</Typography>
-            <Stack direction="row" spacing={1} mb={2} flexWrap="wrap">
+            <Stack direction="row" mb={2} flexWrap="wrap">
                 {task.tags.map((tag: Tag) => (
                     <Tooltip title={tag.description} key={tag.id}>
                         <span>
-                            <Chip key={tag.id} label={tag.name} color="default" />
+                            <Chip
+                                key={tag.id}
+                                label={tag.name}
+                                color="default"
+                                sx={{ marginRight: 1, marginBottom: 1 }} />
                         </span>
                     </Tooltip>
                 ))}
@@ -74,12 +78,13 @@ export default function TaskDetailPage() {
 
             <Typography variant="body1" mb={2}>Profiles:</Typography>
             {task.profiles && task.profiles.length > 0 && (
-                <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
+                <Stack direction="row" mt={1} flexWrap="wrap">
                     {task.profiles.map((profile) => (
                         <Chip
                             key={profile.id}
                             label={`${profile.first_name} ${profile.last_name}`}
                             variant="outlined"
+                            sx={{ marginRight: 1, marginBottom: 1 }}
                         />
                     ))}
                 </Stack>

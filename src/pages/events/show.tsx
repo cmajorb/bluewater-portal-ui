@@ -54,12 +54,12 @@ export const EventShow = () => {
             Invited Families
           </Typography>
 
-          <Stack spacing={2} direction="row" flexWrap="wrap">
+          <Stack direction="row" flexWrap="wrap">
             {event?.invited_families?.map((family: Family) => (
               <Card
                 key={family.id}
                 variant="outlined"
-                sx={{ borderRadius: 2, width: 300 }}
+                sx={{ borderRadius: 2, width: 300, margin: 1 }}
               >
                 <CardContent>
                   <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>

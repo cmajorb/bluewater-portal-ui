@@ -40,12 +40,13 @@ export const EventCard = ({ event: event }: Props) => {
 
                         <Typography variant="body2">{event.description}</Typography>
                         {event.invited_families && event.invited_families.length > 0 && (
-                            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
+                            <Stack direction="row" mt={1} flexWrap="wrap">
                                 {event.invited_families.map((m) => (
                                     <Chip
                                         key={m.id}
                                         label={m.name}
                                         size="small"
+                                        sx={{ marginRight: 1, marginBottom: 1}}
                                     />
                                 ))}
                             </Stack>

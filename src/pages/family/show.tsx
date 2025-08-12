@@ -36,7 +36,7 @@ export default function FamilyDetailPage() {
 
             <Typography variant="body1" m={2}>Family Members:</Typography>
             {family.members && family.members.length > 0 && (
-                <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
+                <Stack direction="row" mt={1} flexWrap="wrap">
                     {family.members.map((m) => (
                         <Tooltip title={m.is_head ? "Head of Family" : ""} key={m.profile.id}>
                             <span>
@@ -44,6 +44,7 @@ export default function FamilyDetailPage() {
                                     key={m.profile.id}
                                     label={`${m.profile.first_name} ${m.profile.last_name}`}
                                     variant={m.is_head ? "filled" : "outlined"}
+                                    sx={{ marginRight: 1, marginBottom: 1}}
                                 />
                             </span>
                         </Tooltip>

@@ -66,22 +66,27 @@ export const TaskCard = ({ task }: Props) => {
 
                         {/* Tags */}
                         {task.tags && task.tags.length > 0 && (
-                            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
+                            <Stack direction="row" mt={1} flexWrap="wrap">
                                 {task.tags.map((tag) => (
-                                    <Chip key={tag.id} label={tag.name} size="small" />
+                                    <Chip
+                                        key={tag.id}
+                                        label={tag.name}
+                                        size="small"
+                                        sx={{ marginRight: 1, marginBottom: 1 }} />
                                 ))}
                             </Stack>
                         )}
 
                         {/* Profiles */}
                         {task.profiles && task.profiles.length > 0 && (
-                            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
+                            <Stack direction="row" mt={1} flexWrap="wrap">
                                 {task.profiles.map((profile) => (
                                     <Chip
                                         key={profile.id}
                                         label={`${profile.first_name} ${profile.last_name}`}
                                         variant="outlined"
                                         size="small"
+                                        sx={{ marginRight: 1, marginBottom: 1 }}
                                     />
                                 ))}
                             </Stack>

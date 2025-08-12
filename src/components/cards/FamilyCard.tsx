@@ -40,13 +40,14 @@ export const FamilyCard = ({ family }: Props) => {
                         <Typography variant="h5">{family.name}</Typography>
 
                         {family.members && family.members.length > 0 && (
-                            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
+                            <Stack direction="row" mt={1} flexWrap="wrap">
                                 {family.members.map((m) => (
                                     <Chip
                                         key={m.profile.id}
                                         label={`${m.profile.first_name} ${m.profile.last_name}`}
                                         variant={m.is_head ? "filled" : "outlined"}
                                         size="small"
+                                        sx={{ marginRight: 1, marginBottom: 1}}
                                     />
                                 ))}
                             </Stack>
