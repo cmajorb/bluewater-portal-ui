@@ -7,7 +7,7 @@ import {
 import { Controller, FieldValues } from "react-hook-form";
 import { UseFormReturnType } from "@refinedev/react-hook-form";
 import { BaseRecord, HttpError, useList } from "@refinedev/core";
-import { ProfileSelector } from "../ProfileSelector";
+import { ProfileSelector } from "../selectors/ProfileSelector";
 import { MinimalProfile } from "../../types";
 
 interface FamilyFormProps {

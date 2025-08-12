@@ -12,7 +12,7 @@ import {
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { Family, Member, MinimalProfile, Profile } from "../../types";
 import { Controller } from "react-hook-form";
-import { ProfileSelector } from "../ProfileSelector";
+import { ProfileSelector } from "../selectors/ProfileSelector";
 import { useList } from "@refinedev/core";
 
 type BookingFormProps = {

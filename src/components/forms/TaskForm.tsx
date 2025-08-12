@@ -11,8 +11,8 @@ import {
     CardContent
 } from "@mui/material";
 import { Controller, FieldValues } from "react-hook-form";
-import { TagSelector } from "../TagSelector";
-import { ProfileSelector } from "../ProfileSelector";
+import { TagSelector } from "../selectors/TagSelector";
+import { ProfileSelector } from "../selectors/ProfileSelector";
 import { UseFormReturnType } from "@refinedev/react-hook-form";
 import { BaseRecord, HttpError, useList } from "@refinedev/core";
 import { MinimalProfile } from "../../types";

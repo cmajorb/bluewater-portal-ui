@@ -19,7 +19,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useCreate, useList } from "@refinedev/core";
 import { useState } from "react";
-import { Tag } from "../types";
+import { Tag } from "../../types";
 
 // The component now expects the full `Tag` objects for its value and onChange props.
 export function TagSelector({ value, onChange }: {

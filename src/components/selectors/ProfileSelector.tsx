@@ -7,7 +7,7 @@ import {
     Select,
     SelectChangeEvent,
 } from "@mui/material";
-import { MinimalProfile } from "../types";
+import { MinimalProfile } from "../../types";
 
 
 
