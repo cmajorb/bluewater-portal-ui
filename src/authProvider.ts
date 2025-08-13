@@ -102,13 +102,22 @@ export const authProvider: AuthProvider = {
   },
 
   check: async () => {
-    // Call the helper function directly
-    const identity = await getIdentityHelper();
-    if (identity) {
-      return { authenticated: true };
+    const token = localStorage.getItem(TOKEN_KEY);
+    const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+
+    if (!token && refresh_token) {
+      try {
+        const { data } = await axios.post(`${API_URL}/auth/refresh`, { refresh_token });
+        localStorage.setItem(TOKEN_KEY, data.access_token);
+      } catch {
+        return { authenticated: false, redirectTo: "/login" };
+      }
     }
 
-    return { authenticated: false, redirectTo: "/login" };
+    const identity = await getIdentityHelper();
+    return identity
+      ? { authenticated: true }
+      : { authenticated: false, redirectTo: "/login" };
   },
 
   logout: async () => {
