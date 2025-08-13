@@ -61,7 +61,8 @@ export const accessControlProvider = {
     const identity = authProvider.getIdentity ? (await authProvider.getIdentity()) as IUser : undefined;
     const isAdmin = identity?.is_admin;
 
-    if (resource === "admin" && !isAdmin) {
+    const restrictedResources = ["admin"];
+    if (restrictedResources.includes(resource) && !isAdmin) {
       // If the resource is "admin" and the user is not an admin, deny access.
       return {
         can: false,
@@ -130,7 +131,7 @@ function App() {
                   {
                     name: "admin",
                     list: "/admin",
-                    icon: <AdminPanelSettingsIcon />, // optional
+                    icon: <AdminPanelSettingsIcon />,
                   }
                 ]}
                 options={{

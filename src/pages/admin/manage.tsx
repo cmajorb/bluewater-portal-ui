@@ -15,12 +15,6 @@ import { useNavigate } from "react-router-dom";
 
 const resources = [
   {
-    title: "Families",
-    description: "Manage family groups and heads of household.",
-    icon: <GroupsIcon fontSize="large" color="primary" />,
-    path: "/admin/families",
-  },
-  {
     title: "Profiles",
     description: "View and manage individual profiles.",
     icon: <PersonIcon fontSize="large" color="primary" />,
@@ -31,19 +25,7 @@ const resources = [
     description: "Manage room info like size and capacity.",
     icon: <MeetingRoomIcon fontSize="large" color="primary" />,
     path: "/admin/rooms",
-  },
-  {
-    title: "Events",
-    description: "Manage events.",
-    icon: <EventIcon fontSize="large" color="primary" />,
-    path: "/admin/events",
-  },
-  {
-    title: "Tasks",
-    description: "Manage tasks.",
-    icon: <TaskIcon fontSize="large" color="primary" />,
-    path: "/admin/tasks",
-  },
+  }
 ];
 
 export default function AdminPanel() {
