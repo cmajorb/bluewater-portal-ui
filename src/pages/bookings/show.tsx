@@ -12,25 +12,91 @@ import { useList, usePermissions, useShow } from "@refinedev/core";
 import { Show } from "@refinedev/mui";
 import { format } from "date-fns";
 import { ChecklistAccordion } from "../../components/Checklist";
-import { Booking, Profile, Room } from "../../types";
+import { Booking, Checklist, Profile, Room } from "../../types";
 
-const checkInChecklist = [
-  { label: "Bring your own bedding and towels (if possible)", key: "0" },
-  { label: "Turn on water", key: "1", images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHRZAL7HZI9E8S-ZZcBl0BWMpGrPxSgtq8hw&s", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqyj91NgnKpkE120U0vinqJhTFNOeEKqNwbQ&s"] },
-  { label: "Turn on breakers", key: "2" },
+const checkInChecklist: Checklist = {
+  id: 1,
+  title: "Check-in Checklist",
+  active: true,
+  scope: "cumulative",
+  items: [
+    {
+      id: 0,
+      text: "Bring your own bedding and towels (if possible)",
+      order: 0,
+      checklist_id: 1,
+      required: true,
+    },
+    {
+      id: 1,
+      text: "Turn on water",
+      order: 1,
+      checklist_id: 1,
+      required: true,
+      picture_ids: [1, 2],
+    },
+    {
+      id: 2,
+      text: "Turn on breakers",
+      order: 2,
+      checklist_id: 1,
+      required: true,
+    },
+  ],
+  tags: [],
+};
 
-];
-
-const checkOutChecklist = [
-  { label: "Laundry started", key: "3" },
-  { label: "Wash dishes", key: "4" },
-  { label: "Clean bathrooms", key: "5" },
-  { label: "Vacuum and mop", key: "6" },
-  { label: "Empty trash", key: "7" },
-  { label: "Lock doors", key: "8" },
-
-];
-
+const checkOutChecklist: Checklist = {
+  id: 2,
+  title: "Check-out Checklist",
+  active: true,
+  scope: "cumulative",
+  items: [
+    {
+      id: 3,
+      text: "Laundry started",
+      order: 0,
+      checklist_id: 2,
+      required: true,
+    },
+    {
+      id: 4,
+      text: "Wash dishes",
+      order: 1,
+      checklist_id: 2,
+      required: true,
+    },
+    {
+      id: 5,
+      text: "Clean bathrooms",
+      order: 2,
+      checklist_id: 2,
+      required: true,
+    },
+    {
+      id: 6,
+      text: "Vacuum and mop",
+      order: 3,
+      checklist_id: 2,
+      required: true,
+    },
+    {
+      id: 7,
+      text: "Empty trash",
+      order: 4,
+      checklist_id: 2,
+      required: true,
+    },
+    {
+      id: 8,
+      text: "Lock doors",
+      order: 5,
+      checklist_id: 2,
+      required: true,
+    },
+  ],
+  tags: [],
+};
 export const BookingShow = () => {
   const { query } = useShow({});
   const { data, isLoading } = query;
@@ -169,12 +235,10 @@ export const BookingShow = () => {
           <Divider />
 
           <ChecklistAccordion
-            title="Check-in checklist"
             checklist={checkInChecklist}
           />
 
           <ChecklistAccordion
-            title="Check-out checklist"
             checklist={checkOutChecklist}
           />
         </Stack>
