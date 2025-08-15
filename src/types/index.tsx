@@ -1,7 +1,19 @@
 export type ChecklistItem = {
-  label: string;
-  key: string;
-  images?: string[];
+  id: number;
+  text: string;
+  order: number;
+  checklist_id: number;
+  required: boolean;
+  picture_ids?: number[];
+};
+
+export type Checklist = {
+  id: number;
+  title: string;
+  active: boolean;
+  scope: "reminder" | "per_user" | "cumulative";
+  items: ChecklistItem[];
+  tags: Tag[];
 };
 
 export type Room = {

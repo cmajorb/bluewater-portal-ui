@@ -7,49 +7,42 @@ import {
   Typography,
   Stack,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  ImageList,
-  ImageListItem,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import { useState } from "react";
-import { ChecklistItem } from "../types"; // Adjust the import path as necessary
+import { Checklist } from "../types";
 
 export const ChecklistAccordion = ({
-  title,
   checklist,
 }: {
-  title: string;
-  checklist: ChecklistItem[];
+  checklist: Checklist;
 }) => {
   const [checklistState, setChecklistState] = useState<Record<string, boolean>>(
     () =>
-      checklist.reduce((acc, item) => {
-        acc[item.key] = false;
+      checklist.items.reduce((acc, item) => {
+        acc[item.id] = false;
         return acc;
       }, {} as Record<string, boolean>)
   );
 
   const [imageDialog, setImageDialog] = useState<{
     open: boolean;
-    images: string[];
+    images: number[];
     label: string;
   }>({ open: false, images: [], label: "" });
 
-  const total = checklist.length;
-  const checked = checklist.filter((item) => checklistState[item.key]).length;
+  const total = checklist.items.length;
+  const checked = checklist.items.filter((item) => checklistState[item.id]).length;
 
-  const handleToggle = (key: string) => {
+  const handleToggle = (key: number) => {
     setChecklistState((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
   };
 
-  const openImageDialog = (images: string[], label: string) => {
+  const openImageDialog = (images: number[], label: string) => {
     setImageDialog({ open: true, images, label });
   };
 
@@ -62,14 +55,14 @@ export const ChecklistAccordion = ({
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography fontWeight="bold">
-            {title} ({checked}/{total})
+            {checklist.title} ({checked}/{total})
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Stack spacing={1}>
-            {checklist.map((item) => (
+            {checklist.items.map((item) => (
               <Stack
-                key={item.key}
+                key={item.id}
                 direction="row"
                 alignItems="center"
                 justifyContent="space-between"
@@ -77,15 +70,15 @@ export const ChecklistAccordion = ({
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={!!checklistState[item.key]}
-                      onChange={() => handleToggle(item.key)}
+                      checked={!!checklistState[item.id]}
+                      onChange={() => handleToggle(item.id)}
                     />
                   }
-                  label={item.label}
+                  label={item.text}
                 />
-                {item.images && item.images?.length > 0 && (
+                {item.picture_ids && item.picture_ids?.length > 0 && (
                   <IconButton
-                    onClick={() => openImageDialog(item.images!, item.label)}
+                    onClick={() => openImageDialog(item.picture_ids!, item.text)}
                     size="small"
                     aria-label="View Images"
                   >
@@ -98,7 +91,7 @@ export const ChecklistAccordion = ({
         </AccordionDetails>
       </Accordion>
 
-      <Dialog open={imageDialog.open} onClose={closeImageDialog} maxWidth="sm" fullWidth>
+      {/* <Dialog open={imageDialog.open} onClose={closeImageDialog} maxWidth="sm" fullWidth>
         <DialogTitle>{imageDialog.label}</DialogTitle>
         <DialogContent>
           <ImageList cols={1}>
@@ -113,7 +106,7 @@ export const ChecklistAccordion = ({
             ))}
           </ImageList>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };

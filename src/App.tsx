@@ -5,6 +5,11 @@ import GroupIcon from "@mui/icons-material/Group";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import ChecklistIcon from '@mui/icons-material/Checklist';
+
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import {
   ErrorComponent,
   RefineSnackbarProvider,
@@ -55,13 +60,17 @@ import { FamilyCreate } from "./pages/family/create";
 import EventsPage from "./pages/events/list";
 import { EventEdit } from "./pages/events/edit";
 import { EventCreate } from "./pages/events/create";
+import ChecklistsPage from "./pages/checklists/list";
+import { ChecklistShow } from "./pages/checklists/show";
+import { ChecklistEdit } from "./pages/checklists/edit";
+import { ChecklistCreate } from "./pages/checklists/create";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
     const identity = authProvider.getIdentity ? (await authProvider.getIdentity()) as IUser : undefined;
     const isAdmin = identity?.is_admin;
 
-    const restrictedResources = ["admin"];
+    const restrictedResources = ["admin", "checklists"];
     if (restrictedResources.includes(resource) && !isAdmin) {
       // If the resource is "admin" and the user is not an admin, deny access.
       return {
@@ -127,6 +136,14 @@ function App() {
                     edit: "/tasks/edit/:id",
                     create: "/tasks/create",
                     icon: <AssignmentIcon />,
+                  },
+                  {
+                    name: "checklists",
+                    list: "/checklists",
+                    show: "/checklists/:id",
+                    edit: "/checklists/edit/:id",
+                    create: "/checklists/create",
+                    icon: <ChecklistIcon />,
                   },
                   {
                     name: "admin",
@@ -196,6 +213,14 @@ function App() {
                       <Route path=":id" element={<TaskDetailPage />} />
                       <Route path="edit/:id" element={<TaskEdit />} />
                       <Route path="create" element={<TaskCreate />} />
+
+                    </Route>
+
+                    <Route path="/checklists">
+                      <Route index element={<ChecklistsPage />} />
+                      <Route path=":id" element={<ChecklistShow />} />
+                      <Route path="edit/:id" element={<ChecklistEdit />} />
+                      <Route path="create" element={<ChecklistCreate />} />
 
                     </Route>
 
