@@ -1,48 +1,39 @@
-# bhr
+# Bluewater Portal
 
-<div align="center" style="margin: 30px;">
-    <a href="https://refine.dev">
-    <img alt="refine logo" src="https://refine.ams3.cdn.digitaloceanspaces.com/readme/refine-readme-banner.png">
-    </a>
-</div>
-<br/>
+<p align="center">
+  <img src="public/bluewater-logo.svg" alt="Bluewater Portal" width="88" />
+</p>
 
-This [Refine](https://github.com/refinedev/refine) project was generated with [create refine-app](https://github.com/refinedev/refine/tree/master/packages/create-refine-app).
+Bluewater Portal is the internal web app for Bluewater Heritage Ranch — manage bookings, events, families, tasks, and profiles in one place.
 
 ## Getting Started
 
-A React Framework for building internal tools, admin panels, dashboards & B2B apps with unmatched flexibility ✨
-
-Refine's hooks and components simplifies the development process and eliminates the repetitive tasks by providing industry-standard solutions for crucial aspects of a project, including authentication, access control, routing, networking, state management, and i18n.
-
 ## Available Scripts
 
-### Running the development server.
+### Running the development server
 
 ```bash
     npm run dev
 ```
 
-### Building for production.
+### Building for production
 
 ```bash
     npm run build
 ```
 
-### Running the production server.
+### Running the production server
 
 ```bash
     npm run start
 ```
 
-## Learn More
+## Tech Stack
 
-To learn more about **Refine**, please check out the [Documentation](https://refine.dev/docs)
-
-- **REST Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
-- **Material UI** [Docs](https://refine.dev/docs/ui-frameworks/mui/tutorial/)
-- **React Router** [Docs](https://refine.dev/docs/core/providers/router-provider/)
-- **Custom Auth Provider** [Docs](https://refine.dev/docs/core/providers/auth-provider/)
+- React 18 + TypeScript
+- Vite
+- Material UI
+- Refine framework for data, routing, and auth
 
 ## License
 

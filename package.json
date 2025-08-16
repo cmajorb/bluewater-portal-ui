@@ -1,5 +1,6 @@
 {
   "name": "bhr",
+  "description": "Bluewater Portal | Manage bookings and more at Bluewater Heritage Ranch.",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -33,6 +34,7 @@
     "react-router-dom": "^7.6.3"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^18.16.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
@@ -42,6 +44,7 @@
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "to-ico": "^1.1.5",
     "typescript": "^5.4.2",
     "vite": "^4.3.1"
   },
@@ -49,7 +52,8 @@
     "dev": "refine dev",
     "build": "tsc && refine build",
     "start": "refine start",
-    "refine": "refine"
+    "refine": "refine",
+    "gen:favicon": "node scripts/generate-favicon.mjs"
   },
   "browserslist": {
     "production": [

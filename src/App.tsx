@@ -44,6 +44,7 @@ import { customDataProvider } from "./dataProvider";
 import { IUser } from "./interfaces";
 import AdminPanel from "./pages/admin/manage";
 import { HomePage } from "./pages/home/HomePage";
+import { BluewaterLogo } from "./components/BluewaterLogo";
 import FamiliesAdmin from "./pages/admin/families";
 import ProfilesAdmin from "./pages/admin/profiles";
 import RoomsAdmin from "./pages/admin/rooms";
@@ -64,6 +65,7 @@ import ChecklistsPage from "./pages/checklists/list";
 import { ChecklistShow } from "./pages/checklists/show";
 import { ChecklistEdit } from "./pages/checklists/edit";
 import { ChecklistCreate } from "./pages/checklists/create";
+import { Typography } from "@mui/material";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
@@ -168,7 +170,8 @@ function App() {
                         <ThemedLayoutV2 Header={Header} Title={({ collapsed }) => (
                           <ThemedTitleV2
                             collapsed={collapsed}
-                            text="Bluewater Portal"
+                            text={<Typography variant="subtitle1">Bluewater Portal</Typography>}
+                            icon={<BluewaterLogo fontSize="small" />}
                           />
                         )}>
                           <Outlet />
