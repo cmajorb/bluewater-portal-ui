@@ -32,9 +32,20 @@ export const customDataProvider: DataProvider = {
       }
     }
 
-    const response = await axios.get(`${API_URL}/${resource}` + (meta?.path ? `/${meta.path}` : ""), {
+    // Build query string with repeated keys for arrays (e.g., tag_ids=1&tag_ids=2)
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => searchParams.append(key, String(v)));
+      } else if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    });
+
+    const url = `${API_URL}/${resource}` + (meta?.path ? `/${meta.path}` : "") + (searchParams.toString() ? `?${searchParams.toString()}` : "");
+
+    const response = await axios.get(url, {
       headers: { Authorization: `Bearer ${token}` },
-      params,
     });
 
     return {

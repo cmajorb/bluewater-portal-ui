@@ -3,13 +3,11 @@ import { DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import GroupIcon from "@mui/icons-material/Group";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ChecklistIcon from '@mui/icons-material/Checklist';
 
-import LocalDiningIcon from '@mui/icons-material/LocalDining';
-import FolderSharedIcon from '@mui/icons-material/FolderShared';
-import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import PersonIcon from '@mui/icons-material/Person';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import {
   ErrorComponent,
   RefineSnackbarProvider,
@@ -42,7 +40,6 @@ import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { customDataProvider } from "./dataProvider";
 import { IUser } from "./interfaces";
-import AdminPanel from "./pages/admin/manage";
 import { HomePage } from "./pages/home/HomePage";
 import { BluewaterLogo } from "./components/BluewaterLogo";
 import FamiliesAdmin from "./pages/admin/families";
@@ -66,13 +63,14 @@ import { ChecklistShow } from "./pages/checklists/show";
 import { ChecklistEdit } from "./pages/checklists/edit";
 import { ChecklistCreate } from "./pages/checklists/create";
 import { Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 
 export const accessControlProvider = {
   can: async ({ resource, action, params }: any) => {
     const identity = authProvider.getIdentity ? (await authProvider.getIdentity()) as IUser : undefined;
     const isAdmin = identity?.is_admin;
 
-    const restrictedResources = ["admin", "checklists"];
+    const restrictedResources = ["profiles", "rooms"];
     if (restrictedResources.includes(resource) && !isAdmin) {
       // If the resource is "admin" and the user is not an admin, deny access.
       return {
@@ -84,6 +82,24 @@ export const accessControlProvider = {
     // Allow access for all other cases
     return { can: true };
   },
+};
+
+const AdminOnly: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [allowed, setAllowed] = useState<boolean | null>(null);
+  useEffect(() => {
+    (async () => {
+      try {
+        const identity = authProvider.getIdentity ? (await authProvider.getIdentity()) as IUser : undefined;
+        setAllowed(!!identity?.is_admin);
+      } catch {
+        setAllowed(false);
+      }
+    })();
+  }, []);
+
+  if (allowed === null) return null;
+  if (!allowed) return <ErrorComponent />;
+  return <>{children}</>;
 };
 
 function App() {
@@ -148,10 +164,15 @@ function App() {
                     icon: <ChecklistIcon />,
                   },
                   {
-                    name: "admin",
-                    list: "/admin",
-                    icon: <AdminPanelSettingsIcon />,
-                  }
+                    name: "profiles",
+                    list: "/admin/profiles",
+                    icon: <PersonIcon />,
+                  },
+                  {
+                    name: "rooms",
+                    list: "/admin/rooms",
+                    icon: <MeetingRoomIcon />,
+                  },
                 ]}
                 options={{
                   syncWithLocation: true,
@@ -227,8 +248,7 @@ function App() {
 
                     </Route>
 
-                    <Route path="/admin">
-                      <Route index element={<AdminPanel />} />
+                    <Route path="/admin" element={<AdminOnly><Outlet /></AdminOnly>}>
                       <Route path="families" element={<FamiliesAdmin />} />
                       <Route path="profiles" element={<ProfilesAdmin />} />
                       <Route path="rooms" element={<RoomsAdmin />} />
