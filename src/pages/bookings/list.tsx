@@ -1,13 +1,16 @@
 import { useList, useMany, useNavigation } from "@refinedev/core";
+import React from "react";
 import { List, CreateButton } from "@refinedev/mui";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Box } from "@mui/material";
+import { Box, CircularProgress, Typography, IconButton, Button } from "@mui/material";
 import { addDays, format } from "date-fns";
 import { Booking, Event, Profile } from "../../types";
 import { EventContentArg } from "@fullcalendar/core";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const colorPalette = [
   "#4CAF50", // green
@@ -32,8 +35,8 @@ const toISODateTime = (
 };
 
 export const BookingList = () => {
-  const { data: bookingData } = useList({ resource: "bookings" });
-  const { data: eventData } = useList({ resource: "events" });
+  const { data: bookingData, isLoading: bookingsLoading } = useList({ resource: "bookings" });
+  const { data: eventData, isLoading: eventsLoading } = useList({ resource: "events" });
   const { show } = useNavigation();
 
   const bookings = bookingData?.data as Booking[] || [];
@@ -58,7 +61,7 @@ export const BookingList = () => {
       ?.map((booking) => booking.submitter_id)
       .filter((id) => id != null) ?? [];
 
-  const { data: profileData } = useMany({
+  const { data: profileData, isLoading: profilesLoading } = useMany({
     resource: "profiles",
     ids: submitterIds,
     queryOptions: {
@@ -125,26 +128,75 @@ export const BookingList = () => {
 
 
   const allCalendarEntries = [...bookingHighlights, ...eventHighlights];
+  const [monthTitle, setMonthTitle] = React.useState<string>(format(new Date(), "MMMM yyyy"));
+  const calendarRef = React.useRef<FullCalendar | null>(null);
 
   return (
     <List headerButtons={<CreateButton />} title="Booking Calendar">
-      <Box sx={{ mt: 2 }}>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          events={allCalendarEntries}
-          editable={false}
-          eventContent={renderEventContent}
-          eventClick={(info) => {
-            const id = info.event.id;
-            if (id.startsWith("event-")) {
-              const eventId = id.replace("event-", "");
-              show("events", eventId);
-            } else {
-              show("bookings", id);
-            }
-          }}
-        />
+      <Box
+        sx={{
+          mt: 2,
+          position: "relative",
+          minHeight: 360,
+          height: { xs: "calc(100dvh - 10rem)", sm: "calc(100dvh - 10rem)" },
+        }}
+      >
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", mb: 1, gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "nowrap", whiteSpace: "nowrap" }}>
+            <Button variant="contained" size="small" onClick={() => calendarRef.current?.getApi().today()}>Today</Button>
+            <IconButton onClick={() => calendarRef.current?.getApi().prev()} aria-label="Previous">
+              <ChevronLeftIcon />
+            </IconButton>
+            <IconButton onClick={() => calendarRef.current?.getApi().next()} aria-label="Next">
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
+          <Typography variant="h6" sx={{ textAlign: "center" }}>{monthTitle}</Typography>
+          <Box />
+        </Box>
+        <Box sx={{ height: "100%" }}>
+          <FullCalendar
+            ref={calendarRef}
+            height={"100%"}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            handleWindowResize={true}
+            headerToolbar={false}
+            datesSet={(arg) => {
+              try {
+                setMonthTitle(format(arg.start, "MMMM yyyy"));
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+            events={allCalendarEntries}
+            editable={false}
+            eventContent={renderEventContent}
+            eventClick={(info) => {
+              const id = info.event.id;
+              if (id.startsWith("event-")) {
+                const eventId = id.replace("event-", "");
+                show("events", eventId);
+              } else {
+                show("bookings", id);
+              }
+            }}
+          />
+        </Box>
+        {(bookingsLoading || eventsLoading || profilesLoading) && (
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              pointerEvents: "none",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
       </Box>
     </List>
   );

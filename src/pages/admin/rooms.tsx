@@ -1,339 +1,416 @@
 import { useState } from "react";
 import {
-    Card,
-    CardContent,
-    Typography,
-    Button,
-    MenuItem,
-    Select,
-    Stack,
-    IconButton,
-    Box,
-    TextField,
+  Stack,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  IconButton,
 } from "@mui/material";
-import { useList, useCreate, useDelete, useUpdate } from "@refinedev/core";
-import { Room } from "../../types";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from '@mui/icons-material/Close';
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { List, CreateButton, useDataGrid } from "@refinedev/mui";
+import { useCreate, useDelete, useUpdate } from "@refinedev/core";
+import type { Room } from "../../types";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 
 const floors = ["1st", "2nd"];
-const bedSizes = ["King", "Queen", "Double", "Twin", "Bunk", "Other", "Double Double"];
+const bedSizes = [
+  "King",
+  "Queen",
+  "Double",
+  "Twin",
+  "Bunk",
+  "Other",
+  "Double Double",
+];
 
 export default function RoomsAdmin() {
-    const { data, refetch } = useList({ resource: "rooms" });
-    const rooms: Room[] = (data?.data as Room[]) || [];
+  const { dataGridProps } = useDataGrid<Room>({ resource: "rooms", hasPagination: false });
 
-    const [editStates, setEditStates] = useState<{ [id: number]: boolean }>({});
-    const [roomEdits, setRoomEdits] = useState<{ [id: number]: Partial<Room> }>({});
+  const { mutate: createRoom } = useCreate();
+  const { mutate: deleteRoom } = useDelete();
+  const { mutate: updateRoom } = useUpdate();
 
-    const [newRoom, setNewRoom] = useState({
-        name: "",
-        floor: "1st",
-        bed_size: "Queen",
-        min_people: "",
-        max_people: "",
-        notes: "",
-    });
+  const [notesOpen, setNotesOpen] = useState<{
+    open: boolean;
+    text: string;
+  }>({ open: false, text: "" });
 
-    const { mutate: createRoom } = useCreate();
-    const { mutate: deleteRoom } = useDelete();
-    const { mutate: updateRoom } = useUpdate();
+  const [createOpen, setCreateOpen] = useState(false);
+  const [newRoom, setNewRoom] = useState({
+    name: "",
+    floor: "1st",
+    bed_size: "Queen",
+    min_people: "",
+    max_people: "",
+    notes: "",
+  });
 
-    const handleCreate = () => {
-        if (!newRoom.name) return;
+  const [editOpen, setEditOpen] = useState<{
+    open: boolean;
+    record?: Room;
+  }>({ open: false });
 
-        createRoom(
-            {
-                resource: "rooms",
-                values: {
-                    ...newRoom,
-                    min_people: Number(newRoom.min_people),
-                    max_people: Number(newRoom.max_people),
-                },
-            },
-            {
-                onSuccess: () => {
-                    setNewRoom({
-                        name: "",
-                        floor: "1st",
-                        bed_size: "Queen",
-                        min_people: "",
-                        max_people: "",
-                        notes: "",
-                    });
-                    refetch();
-                },
-            }
-        );
-    };
+  const [confirmDelete, setConfirmDelete] = useState<{
+    open: boolean;
+    id?: number;
+    name?: string;
+    loading?: boolean;
+  }>({ open: false });
 
-    const handleEditToggle = (id: number, room: Room) => {
-        setEditStates((prev) => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
-        setRoomEdits((prev) => ({
-            ...prev,
-            [id]: prev[id] ?? { ...room },
-        }));
-    };
-
-    const handleEditChange = (
-        id: number,
-        field: keyof Room,
-        value: string | number
-    ) => {
-        setRoomEdits((prev) => ({
-            ...prev,
-            [id]: {
-                ...prev[id],
-                [field]: value,
-            },
-        }));
-    };
-
-    const handleSave = (id: number) => {
-        const values = roomEdits[id];
-        updateRoom(
-            {
-                resource: "rooms",
-                id,
-                values,
-            },
-            {
-                onSuccess: () => {
-                    setEditStates((prev) => ({ ...prev, [id]: false }));
-                    setRoomEdits((prev) => {
-                        const updated = { ...prev };
-                        delete updated[id];
-                        return updated;
-                    });
-                    refetch();
-                },
-            }
-        );
-    };
-
-    const handleDelete = (id: number) => {
-        deleteRoom(
-            { resource: "rooms", id },
-            {
-                onSuccess: () => refetch(),
-            }
-        );
-    };
-
-    return (
-        <Box p={4}>
-            <Typography variant="h4">Manage Rooms</Typography>
-
-            <Card className="max-w-md mx-auto mb-6">
-                <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                        Create New Room
-                    </Typography>
-                    <Stack spacing={2}>
-                        <TextField
-                            label="Room Name"
-                            slotProps={{ inputLabel: { shrink: true } }}
-                            value={newRoom.name}
-                            onChange={(e) =>
-                                setNewRoom({ ...newRoom, name: e.target.value })
-                            }
-                            size="small"
-                        />
-                        <Select
-                            fullWidth
-                            value={newRoom.floor}
-                            onChange={(e) =>
-                                setNewRoom({ ...newRoom, floor: e.target.value })
-                            }
-                        >
-                            {floors.map((f) => (
-                                <MenuItem key={f} value={f}>
-                                    {f}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        <Select
-                            fullWidth
-                            value={newRoom.bed_size}
-                            onChange={(e) =>
-                                setNewRoom({ ...newRoom, bed_size: e.target.value })
-                            }
-                        >
-                            {bedSizes.map((size) => (
-                                <MenuItem key={size} value={size}>
-                                    {size.charAt(0).toUpperCase() + size.slice(1)}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        <TextField
-                            label="Min People"
-                            slotProps={{ inputLabel: { shrink: true } }}
-                            value={newRoom.min_people}
-                            type="number"
-                            onChange={(e) =>
-                                setNewRoom({ ...newRoom, min_people: e.target.value })
-                            }
-                            size="small"
-                        />
-                        <TextField
-                            label="Max People"
-                            slotProps={{ inputLabel: { shrink: true } }}
-                            value={newRoom.max_people}
-                            type="number"
-                            onChange={(e) =>
-                                setNewRoom({ ...newRoom, max_people: e.target.value })
-                            }
-                            size="small"
-                        />
-                        <TextField
-                            label="Notes"
-                            slotProps={{ inputLabel: { shrink: true } }}
-                            value={newRoom.notes}
-                            onChange={(e) =>
-                                setNewRoom({ ...newRoom, notes: e.target.value })
-                            }
-                            size="small"
-                        />
-                        <Button variant="contained" onClick={handleCreate}>
-                            Add Room
-                        </Button>
-                    </Stack>
-                </CardContent>
-            </Card>
-
-
-            <Typography variant="h6" gutterBottom>
-                Existing Rooms
-            </Typography>
-
-            <Stack spacing={3}>
-                {rooms.map((room) => {
-                    const isEditing = editStates[room.id] || false;
-                    const values = isEditing ? roomEdits[room.id] || room : room;
-
-                    return (
-                        <Card key={room.id}>
-                            <CardContent className="flex flex-col gap-4">
-                                {isEditing ? (<Stack spacing={2}>
-                                    <TextField
-                                        label="Room Name"
-                                        slotProps={{ inputLabel: { shrink: true } }}
-                                        value={values.name}
-                                        onChange={(e) =>
-                                            handleEditChange(room.id, "name", e.target.value)
-                                        }
-                                        size="small"
-                                    />
-                                    <Select
-                                        value={values.floor}
-                                        onChange={(e) =>
-                                            handleEditChange(room.id, "floor", e.target.value)
-                                        }
-                                        fullWidth
-                                        disabled={!isEditing}
-                                    >
-                                        {floors.map((f) => (
-                                            <MenuItem key={f} value={f}>
-                                                {f}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    <Select
-                                        value={values.bed_size}
-                                        onChange={(e) =>
-                                            handleEditChange(room.id, "bed_size", e.target.value)
-                                        }
-                                        fullWidth
-                                        disabled={!isEditing}
-                                    >
-                                        {bedSizes.map((b) => (
-                                            <MenuItem key={b} value={b}>
-                                                {b}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    <TextField
-                                        label="Min People"
-                                        slotProps={{ inputLabel: { shrink: true } }}
-                                        value={values.min_people}
-                                        type="number"
-                                        onChange={(e) =>
-                                            handleEditChange(
-                                                room.id,
-                                                "min_people",
-                                                Number(e.target.value)
-                                            )
-                                        }
-                                        size="small"
-                                    />
-                                    <TextField
-                                        label="Max People"
-                                        slotProps={{ inputLabel: { shrink: true } }}
-                                        value={values.max_people}
-                                        type="number"
-                                        onChange={(e) =>
-                                            handleEditChange(
-                                                room.id,
-                                                "max_people",
-                                                Number(e.target.value)
-                                            )
-                                        }
-                                        size="small"
-                                    />
-                                    <TextField
-                                        label="Notes"
-                                        slotProps={{ inputLabel: { shrink: true } }}
-                                        value={values.notes}
-                                        onChange={(e) =>
-                                            handleEditChange(room.id, "notes", e.target.value)
-                                        }
-                                        size="small"
-                                    />
-                                </Stack>) : (<>
-                                    <Typography variant="h6">{room.name}</Typography>
-                                    <Stack spacing={1}>
-
-                                        <Typography variant="body1">
-                                            <strong>Floor:</strong> {values.floor}
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            <strong>Bed Size:</strong> {values.bed_size}
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            <strong>People per room:</strong> {values.min_people} - {values.max_people}
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            <strong>Notes:</strong> {values.notes}
-                                        </Typography>
-                                    </Stack>
-                                </>
-                                )}
-
-
-                                <div className="flex gap-2">
-
-                                    <IconButton onClick={() => handleEditToggle(room.id, room)}>
-                                        {isEditing ? <CloseIcon color="primary" /> : <EditIcon color="primary" />}
-                                    </IconButton>
-
-                                    {isEditing && (
-                                        <IconButton onClick={() => handleSave(room.id)}>
-                                            <SaveIcon color="primary" />
-                                        </IconButton>
-                                    )}
-                                    <IconButton onClick={() => handleDelete(room.id)}>
-                                        <DeleteIcon color="error" />
-                                    </IconButton>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    );
-                })}</Stack>
-        </Box>
+  const handleCreate = () => {
+    if (!newRoom.name) return;
+    createRoom(
+      {
+        resource: "rooms",
+        values: {
+          ...newRoom,
+          min_people: Number(newRoom.min_people),
+          max_people: Number(newRoom.max_people),
+        },
+      },
+      {
+        onSuccess: () => {
+          setCreateOpen(false);
+          setNewRoom({
+            name: "",
+            floor: "1st",
+            bed_size: "Queen",
+            min_people: "",
+            max_people: "",
+            notes: "",
+          });
+          // cache invalidation will refresh the grid automatically
+        },
+      },
     );
+  };
+
+  const handleUpdate = () => {
+    if (!editOpen.record) return;
+    const r = editOpen.record;
+    updateRoom(
+      {
+        resource: "rooms",
+        id: r.id,
+        values: r,
+      },
+      {
+        onSuccess: () => {
+          setEditOpen({ open: false, record: undefined });
+        },
+      },
+    );
+  };
+
+  const handleDelete = (id: number, name: string) => {
+    setConfirmDelete({ open: true, id, name, loading: false });
+  };
+
+  const columns: GridColDef<Room>[] = [
+    { field: "name", headerName: "Name", flex: 1, minWidth: 150 },
+    { field: "floor", headerName: "Floor", flex: 0.5, minWidth: 100 },
+    { field: "bed_size", headerName: "Bed Size", flex: 0.8, minWidth: 120 },
+    {
+      field: "occupant_range",
+      headerName: "Occupant Range",
+      flex: 0.8,
+      minWidth: 150,
+      valueGetter: (_value, row) => {
+        const min = (row as Room).min_people;
+        const max = (row as Room).max_people;
+        return `${min} - ${max}`;
+      },
+      sortComparator: (v1, v2) => {
+        const [aMinRaw, aMaxRaw] = String(v1).split(" - ");
+        const [bMinRaw, bMaxRaw] = String(v2).split(" - ");
+        const aMin = Number(aMinRaw ?? 0);
+        const bMin = Number(bMinRaw ?? 0);
+        if (aMin === bMin) {
+          const aMax = Number(aMaxRaw ?? 0);
+          const bMax = Number(bMaxRaw ?? 0);
+          return aMax - bMax;
+        }
+        return aMin - bMin;
+      },
+    },
+    {
+      field: "notes",
+      headerName: "Notes",
+      align: "center",
+      headerAlign: "center",
+      sortable: true,
+      filterable: false,
+      minWidth: 100,
+      renderCell: (params) => {
+        const text: string | undefined = (params.row as Room).notes;
+        const disabled = !text || text.trim().length === 0;
+        return (
+          <IconButton
+            size="small"
+            disabled={disabled}
+            onClick={() =>
+              setNotesOpen({ open: true, text: text || "" })
+            }
+          >
+            <VisibilityIcon />
+          </IconButton>
+        );
+      },
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      filterable: false,
+      align: "center",
+      headerAlign: "center",
+      minWidth: 140,
+      renderCell: (params) => (
+        <Stack height={'100%'} direction="row" spacing={1} alignItems="center" justifyContent="center">
+          <IconButton
+            size="small"
+            onClick={() =>
+              setEditOpen({ open: true, record: { ...(params.row as Room) } })
+            }
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={() => {
+              const r = params.row as Room;
+              handleDelete(r.id, r.name);
+            }}
+          >
+            <DeleteIcon color="error" />
+          </IconButton>
+        </Stack>
+      ),
+    },
+  ];
+
+  return (
+    <List
+      title={<Typography variant="h5">Manage Rooms</Typography>}
+      headerButtons={
+        <CreateButton onClick={() => setCreateOpen(true)} />
+      }
+    >
+      <DataGrid
+        {...dataGridProps}
+        columns={columns}
+        autoHeight
+        disableRowSelectionOnClick
+        paginationMode="client"
+        sortingMode="client"
+        slotProps={{
+          baseButton: { size: "small" },
+        }}
+        hideFooterSelectedRowCount
+        hideFooterPagination
+        // Hide pagination UI to show all
+        slots={{}}
+        sx={{
+          '& .MuiDataGrid-columnHeaders': { fontWeight: 600 },
+        }}
+      />
+
+      {/* Notes dialog */}
+      <Dialog open={notesOpen.open} onClose={() => setNotesOpen({ open: false, text: "" })} maxWidth="sm" fullWidth>
+        <DialogTitle>Notes</DialogTitle>
+        <DialogContent>
+          <Typography whiteSpace="pre-wrap">{notesOpen.text}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNotesOpen({ open: false, text: "" })}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Create dialog */}
+      <Dialog open={createOpen} onClose={() => setCreateOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Create Room</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} mt={1}>
+            <TextField
+              label="Room Name"
+              value={newRoom.name}
+              onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
+              size="small"
+              fullWidth
+            />
+            <Select
+              fullWidth
+              size="small"
+              value={newRoom.floor}
+              onChange={(e) => setNewRoom({ ...newRoom, floor: e.target.value as string })}
+            >
+              {floors.map((f) => (
+                <MenuItem key={f} value={f}>{f}</MenuItem>
+              ))}
+            </Select>
+            <Select
+              fullWidth
+              size="small"
+              value={newRoom.bed_size}
+              onChange={(e) => setNewRoom({ ...newRoom, bed_size: e.target.value as string })}
+            >
+              {bedSizes.map((b) => (
+                <MenuItem key={b} value={b}>{b}</MenuItem>
+              ))}
+            </Select>
+            <Stack direction="row" spacing={2}>
+              <TextField
+                label="Min People"
+                type="number"
+                value={newRoom.min_people}
+                onChange={(e) => setNewRoom({ ...newRoom, min_people: e.target.value })}
+                size="small"
+                fullWidth
+              />
+              <TextField
+                label="Max People"
+                type="number"
+                value={newRoom.max_people}
+                onChange={(e) => setNewRoom({ ...newRoom, max_people: e.target.value })}
+                size="small"
+                fullWidth
+              />
+            </Stack>
+            <TextField
+              label="Notes"
+              value={newRoom.notes}
+              onChange={(e) => setNewRoom({ ...newRoom, notes: e.target.value })}
+              size="small"
+              fullWidth
+              multiline
+              minRows={3}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCreateOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleCreate}>Create</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit dialog */}
+      <Dialog open={editOpen.open} onClose={() => setEditOpen({ open: false })} maxWidth="sm" fullWidth>
+        <DialogTitle>Edit Room</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} mt={1}>
+            <TextField
+              label="Room Name"
+              value={editOpen.record?.name ?? ""}
+              onChange={(e) => setEditOpen((prev) => ({
+                open: true,
+                record: { ...(prev.record as Room), name: e.target.value },
+              }))}
+              size="small"
+              fullWidth
+            />
+            <Select
+              fullWidth
+              size="small"
+              value={editOpen.record?.floor ?? "1st"}
+              onChange={(e) => setEditOpen((prev) => ({
+                open: true,
+                record: { ...(prev.record as Room), floor: e.target.value as string },
+              }))}
+            >
+              {floors.map((f) => (
+                <MenuItem key={f} value={f}>{f}</MenuItem>
+              ))}
+            </Select>
+            <Select
+              fullWidth
+              size="small"
+              value={editOpen.record?.bed_size ?? "Queen"}
+              onChange={(e) => setEditOpen((prev) => ({
+                open: true,
+                record: { ...(prev.record as Room), bed_size: e.target.value as string },
+              }))}
+            >
+              {bedSizes.map((b) => (
+                <MenuItem key={b} value={b}>{b}</MenuItem>
+              ))}
+            </Select>
+            <Stack direction="row" spacing={2}>
+              <TextField
+                label="Min People"
+                type="number"
+                value={editOpen.record?.min_people ?? 0}
+                onChange={(e) => setEditOpen((prev) => ({
+                  open: true,
+                  record: { ...(prev.record as Room), min_people: Number(e.target.value) },
+                }))}
+                size="small"
+                fullWidth
+              />
+              <TextField
+                label="Max People"
+                type="number"
+                value={editOpen.record?.max_people ?? 0}
+                onChange={(e) => setEditOpen((prev) => ({
+                  open: true,
+                  record: { ...(prev.record as Room), max_people: Number(e.target.value) },
+                }))}
+                size="small"
+                fullWidth
+              />
+            </Stack>
+            <TextField
+              label="Notes"
+              value={editOpen.record?.notes ?? ""}
+              onChange={(e) => setEditOpen((prev) => ({
+                open: true,
+                record: { ...(prev.record as Room), notes: e.target.value },
+              }))}
+              size="small"
+              fullWidth
+              multiline
+              minRows={3}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditOpen({ open: false, record: undefined })}>Cancel</Button>
+          <Button variant="contained" onClick={handleUpdate}>Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirm delete dialog */}
+      <ConfirmDialog
+        open={confirmDelete.open}
+        title="Delete Room"
+        description={
+          <>
+            Are you sure you want to delete <strong>{confirmDelete.name}</strong>? This action cannot be undone.
+          </>
+        }
+        confirmText="Delete"
+        confirmColor="error"
+        loading={!!confirmDelete.loading}
+        onClose={() => setConfirmDelete({ open: false })}
+        onConfirm={() => {
+          if (!confirmDelete.id) return;
+          setConfirmDelete((p) => ({ ...p, loading: true }));
+          deleteRoom(
+            { resource: "rooms", id: confirmDelete.id },
+            {
+              onSettled: () => setConfirmDelete({ open: false }),
+            },
+          );
+        }}
+      />
+    </List>
+  );
 }

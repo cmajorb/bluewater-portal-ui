@@ -22,9 +22,10 @@ import { useState } from "react";
 import { Tag } from "../../types";
 
 // The component now expects the full `Tag` objects for its value and onChange props.
-export function TagSelector({ value, onChange }: {
+export function TagSelector({ value, onChange, addNewDisabled }: {
     value: Tag[];
     onChange: (tags: Tag[]) => void;
+    addNewDisabled?: boolean;
 }) {
     // 1. Use `isLoading` for a correct loading state.
     const { data: tagsData, isLoading, refetch } = useList({ resource: "tags" });
@@ -77,20 +78,21 @@ export function TagSelector({ value, onChange }: {
                     ))}
                 </Select>
             </FormControl>
-            <IconButton
-                onClick={() => setIsDialogOpen(true)}
-                sx={{
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 1,
-                    padding: "12px",
-                }}
-                color="primary"
-            >
-                <AddIcon />
-            </IconButton>
+            {!addNewDisabled && (
+                <IconButton
+                    onClick={() => setIsDialogOpen(true)}
+                    sx={{
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: 1,
+                        padding: "12px",
+                    }}
+                    color="primary"
+                >
+                    <AddIcon />
+                </IconButton>
+            )}
 
-            {/* The Dialog logic was already correct. No changes needed here. */}
             <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} fullWidth>
                 <DialogTitle>Create New Tag</DialogTitle>
                 <DialogContent>

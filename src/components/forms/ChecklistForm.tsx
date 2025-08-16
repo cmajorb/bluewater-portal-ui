@@ -141,6 +141,18 @@ export const ChecklistForm = ({ form, checklistId }: ChecklistFormProps) => {
 
                     <Controller
                         control={control}
+                        name="active"
+                        defaultValue={true}
+                        render={({ field }) => (
+                            <FormControlLabel
+                                control={<Checkbox checked={!!field.value} onChange={(e) => field.onChange(e.target.checked)} />}
+                                label="Active"
+                            />
+                        )}
+                    />
+
+                    <Controller
+                        control={control}
                         name="tags"
                         defaultValue={[]}
                         render={({ field }) => (
